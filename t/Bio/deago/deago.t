@@ -6,12 +6,12 @@ BEGIN { unshift( @INC, './lib' ) }
 
 BEGIN {
     use Test::Most;
-    use_ok('Bio::DeagoAnnotation');
+    use_ok('Bio::Deago');
 }
 
 my $obj ;
 
-#ok( $obj = Bio::Bio::DeagoAnnotation->new(
+#ok( $obj = Bio::Bio::Deago->new(
 #   input_file    => 'contigs.fa',
 #   sample_name      => 'sample123',
 #   dbdir            => '/tmp',

@@ -1,13 +1,14 @@
-package Bio::DeagoAnnotation;
+
+package Bio::Deago;
 
 # ABSTRACT: Prepare deago annotations from BioMart TSV files
 
 =head1 SYNOPSIS
 
 Prepare deago annotations from BioMart TSV files.
-   use Bio::DeagoAnnotation;
+   use Bio::Deago;
    
-   my $obj = Bio::DeagoAnnotation->new(
+   my $obj = Bio::Deago->new(
      assembly_file    => $assembly_file,
      annotation_tool  => $annotation_tool,
      sample_name      => $lane_name,

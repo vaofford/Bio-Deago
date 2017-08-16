@@ -8,7 +8,10 @@ Build a configuration file for use with deago
 
 use Moose;
 use Getopt::Long qw(GetOptionsFromArray);
-use Bio::Deago;
+use Config::General;
+use File::Basename;
+
+use Bio::Deago::BuildDeagoConfig;
 
 extends 'Bio::Deago::CommandLine::Common';
 with 'Bio::Deago::Config::Role';
@@ -58,20 +61,25 @@ sub BUILD {
 		die($self->_version());
 	}
 
-	if ( @{ $self->args } == 0 ) {
-		$self->_error_message("Error: You need to provide arguements");
+	if ( @{ $self->args } > 0 ) {
+		$self->_error_message("Error: You need to remove trailing arguements");
 	}
-
-	use Data::Dumper;
-	print Dumper(@{ $self->args });
 
 	if( !defined($counts_directory) ) {
 		$self->_error_message("Error: You need to provide a counts directory");
+	} else {
+		$self->counts_directory($counts_directory);
 	}
 
 	if( !defined($targets_file) ) {
 		$self->_error_message("Error: You need to provide a targets_file");
+	} else {
+		$self->targets_file($targets_file);
 	}
+
+	$self->annotation_file($annotation_file) if ( defined($annotation_file) );
+	$self->control($control) if ( defined($control) );
+
 }
 
 sub run {
@@ -81,6 +89,29 @@ sub run {
 		print $self->_error_message . "\n";
 		die $self->usage_text;
 	}
+
+	my %config_parameters = ( 'counts_directory' 	=> $self->counts_directory,
+														'targets_file' 			=> $self->targets_file,
+														'results_directory' => $self->results_directory,
+														'qvalue'						=> $self->qvalue,
+														'keep_images'				=> $self->keep_images,
+														'qc_only'						=> $self->qc_only,
+														'go_analysis'				=> $self->go_analysis
+													);
+
+	$config_parameters{'annotation_file'} = $self->annotation_file if ( defined($self->annotation_file) );
+	$config_parameters{'control'} = $self->control if ( defined($self->control) );
+
+	my $config_file = $self->output_directory . "/" . $self->output_file;
+
+	my $config_obj = Config::General->new( 	-ConfigFile => $config_file, 
+																					-ConfigHash => \%config_parameters, 
+																					-AllowMultiOptions => 'no'
+																				);
+
+	my $deago_config = Bio::Deago::BuildDeagoConfig->new( 'config' => $config_obj );
+
+	$deago_config->config_file();
 }
 
 sub usage_text {

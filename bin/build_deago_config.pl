@@ -1,0 +1,18 @@
+#!/usr/bin/env perl
+
+package Bio::Deago::Main::BuildDeagoConfig;
+
+# ABSTRACT: Build a configuration file for use with deago
+# PODNAME: build_deago_config
+
+=head1 SYNOPSIS
+
+Build a configuration file for use with deago
+=cut
+
+BEGIN { unshift( @INC, '../lib' ) }
+BEGIN { unshift( @INC, './lib' ) }
+#BEGIN { unshift( @INC, '/software/pathogen/internal/prod/lib/' ) }
+use Bio::Deago::CommandLine::BuildDeagoConfig;
+
+Bio::Deago::CommandLine::BuildDeagoConfig->new(args => \@ARGV, script_name => $0)->run;

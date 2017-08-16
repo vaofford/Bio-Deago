@@ -3,6 +3,7 @@ use strict;
 use warnings;
 
 BEGIN { unshift( @INC, './lib' ) }
+BEGIN { unshift( @INC, './t/lib' ) }
 
 BEGIN {
     use Test::Most;

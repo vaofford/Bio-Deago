@@ -9,8 +9,9 @@ Build a configuration file for use with deago
 use Moose;
 use Getopt::Long qw(GetOptionsFromArray);
 use Bio::Deago;
-use Cwd;
+
 extends 'Bio::Deago::CommandLine::Common';
+with 'Bio::Deago::Config::Role';
 
 has 'args'         			=> ( is => 'ro', isa => 'ArrayRef', required => 1 );
 #has 'script_name'  			=> ( is => 'ro', isa => 'Str',      required => 1 );
@@ -20,16 +21,6 @@ has '_error_message' 		=> ( is => 'rw', isa => 'Str' );
 has 'verbose' 					=> ( is => 'rw', isa => 'Bool', 		default => 0 );
 has 'output_file' 			=> ( is => 'rw', isa => 'Str', 			default=>'deago.config');
 has 'output_directory'	=> ( is => 'rw', isa => 'Str', 			default => '.' );
-
-has 'counts_directory'  => ( is => 'rw', isa => 'Str');
-has 'targets_file' 	   	=> ( is => 'rw', isa => 'Str');
-has 'results_directory' => ( is => 'rw', isa => 'Str', 			default => getcwd());
-has 'annotation_file'   => ( is => 'rw', isa => 'Str');
-has 'control'   				=> ( is => 'rw', isa => 'Str');
-has 'qvalue'   					=> ( is => 'rw', isa => 'Num', 			default=>0.05);
-has 'keep_images'   		=> ( is => 'rw', isa => 'Bool', 		default=>0);
-has 'qc_only'  					=> ( is => 'rw', isa => 'Bool', 		default=>0);
-has 'go_analysis' 			=> ( is => 'rw', isa => 'Bool', 		default=>0);
 
 sub BUILD {
 	my ($self) = @_;

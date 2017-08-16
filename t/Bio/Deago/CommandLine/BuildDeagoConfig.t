@@ -1,4 +1,5 @@
 #!/usr/bin/env perl
+
 use Moose;
 use Data::Dumper;
 use Cwd;
@@ -6,6 +7,8 @@ use Cwd;
 BEGIN { unshift( @INC, './lib' ) }
 BEGIN { unshift( @INC, './t/lib' ) }
 with 'TestHelper';
+
+$ENV{PATH} .= ":../bin";
 
 BEGIN {
     use Test::Most;
@@ -24,6 +27,9 @@ my %scripts_and_expected_files = (
         [ 'empty_file', 't/data/empty_file' ],
 );
 
+stdout_should_have($script_name,'', 'Error: You need to provide');
+
 mock_execute_script_and_check_output( $script_name, \%scripts_and_expected_files );
+
 
 done_testing();

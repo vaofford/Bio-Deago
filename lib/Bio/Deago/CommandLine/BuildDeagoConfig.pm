@@ -80,6 +80,11 @@ sub BUILD {
 	$self->annotation_file($annotation_file) if ( defined($annotation_file) );
 	$self->control($control) if ( defined($control) );
 
+	$self->output_directory( $output_directory =~ s/\/$//r ) if( defined($output_directory) );
+	$self->output_file( $output_file ) if( defined($output_file) );
+
+	my $config_file = $self->output_directory . "/" . $self->output_file;
+	$self->config_file($config_file) if ( defined($config_file) );
 }
 
 sub run {
@@ -90,28 +95,17 @@ sub run {
 		die $self->usage_text;
 	}
 
-	my %config_parameters = ( 'counts_directory' 	=> $self->counts_directory,
-														'targets_file' 			=> $self->targets_file,
-														'results_directory' => $self->results_directory,
-														'qvalue'						=> $self->qvalue,
-														'keep_images'				=> $self->keep_images,
-														'qc_only'						=> $self->qc_only,
-														'go_analysis'				=> $self->go_analysis
-													);
+	my $config = $self->config_hash();
 
-	$config_parameters{'annotation_file'} = $self->annotation_file if ( defined($self->annotation_file) );
-	$config_parameters{'control'} = $self->control if ( defined($self->control) );
+	if ( $self->is_valid() ) {
+		print "HELLO";
+	}
+	#my $deago_config = Bio::Deago::BuildDeagoConfig->new( 'config' => $config );
 
-	my $config_file = $self->output_directory . "/" . $self->output_file;
+	#$deago_config->build_config_file();
 
-	my $config_obj = Config::General->new( 	-ConfigFile => $config_file, 
-																					-ConfigHash => \%config_parameters, 
-																					-AllowMultiOptions => 'no'
-																				);
-
-	my $deago_config = Bio::Deago::BuildDeagoConfig->new( 'config' => $config_obj );
-
-	$deago_config->config_file();
+	#use Data::Dumper;
+	#print Dumper($deago_config->ParseConfig(""));
 }
 
 sub usage_text {

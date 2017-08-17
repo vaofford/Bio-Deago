@@ -6,17 +6,13 @@ use Config::General;
 with 'Bio::Deago::Config::Role';
 
 has 'config' 			=> ( is => 'ro', isa => 'Config::General', 	required => 1);
-has 'config_file' => ( is => 'ro', isa => 'Str', lazy => 1, 	builder => '_build_config_file' );
-
-sub _validate_config {
-	my ($self) = @_;
-}
+has 'build_config_file' => ( is => 'ro', isa => 'Str', lazy => 1, builder => '_build_config_file' );
 
 sub _build_config_file {
 	my ($self) = @_;
 
 	use Data::Dumper;
-	print Dumper($self->config);
+	print Dumper($self);
 }
 
 no Moose;

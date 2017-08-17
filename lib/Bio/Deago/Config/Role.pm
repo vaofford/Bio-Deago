@@ -33,7 +33,8 @@ sub _build_config {
 	$config_hash{'control'} = $self->control if ( defined($self->control) );
 
 	my $config_obj = Config::General->new(	-ConfigHash 				=> \%config_hash, 
-																					-AllowMultiOptions 	=> 'no'
+																					-AllowMultiOptions 	=> 'no',
+																					-SaveSorted 				=> 'yes'
 																				);
 
 	return($config_obj);

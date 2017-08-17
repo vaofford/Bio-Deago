@@ -4,6 +4,8 @@ use Test::Most;
 use Data::Dumper;
 use Test::Files;
 use Test::Output;
+use Log::Log4perl qw(:easy);
+use Config::General;
 
 $ENV{PATH} .= ":./bin";
 
@@ -13,6 +15,7 @@ sub mock_execute_script_and_check_output {
     open OLDOUT, '>&STDOUT';
     open OLDERR, '>&STDERR';
     eval("use $script_name ;");
+
     my $returned_values = 0;
     {
         local *STDOUT;
@@ -30,11 +33,12 @@ sub mock_execute_script_and_check_output {
 
             my $actual_output_file_name   = $scripts_and_expected_files->{$script_parameters}->[0];
             my $expected_output_file_name = $scripts_and_expected_files->{$script_parameters}->[1];
+
             ok( -e $actual_output_file_name, "Actual output file exists $actual_output_file_name  $script_parameters" );
 
             compare_ok( $actual_output_file_name, $expected_output_file_name, "Actual and expected output match for '$script_parameters'" );
 
-            unlink($actual_output_file_name);
+            #unlink($actual_output_file_name);
         }
         close STDOUT;
         close STDERR;
@@ -49,8 +53,7 @@ sub mock_execute_script_and_check_output {
     close OLDERR or die "Can't close OLDERR: $!";
 }
 
-sub stdout_should_have
-{
+sub stdout_should_have {
     my ( $script_name, $parameters, $expected ) = @_;
     my @input_args = split( " ", $parameters );
     open OLDERR, '>&STDERR';
@@ -65,6 +68,33 @@ sub stdout_should_have
     open STDERR, '>&OLDERR' or die "Can't restore stderr: $!";
     close OLDERR or die "Can't close OLDERR: $!";
 }
+
+sub stderr_should_have {
+    my ( $script_name, $parameters, $expected ) = @_;
+    my @input_args = split( " ", $parameters );
+    open OLDOUT, '>&STDOUT';
+    eval("use $script_name ;");
+    my $returned_values = 0;
+    {
+        local *STDOUT;
+        open STDOUT, '>/dev/null' or warn "Can't open /dev/null: $!";
+        stderr_like { eval("$script_name->new(args => \\\@input_args, script_name => '$script_name')->run;"); } qr/$expected/, "got expected text $expected for $parameters";
+        close STDOUT;
+    }
+    open STDOUT, '>&OLDOUT' or die "Can't restore stdout: $!";
+    close OLDOUT or die "Can't close OLDOUT: $!";
+}
+
+sub build_test_config_file {
+    my ( $config_file, $config_hash ) = @_;
+
+    my $config = Config::General->new(  -ConfigHash        => $config_hash, 
+                                        -AllowMultiOptions  => 'no',
+                                        -SaveSorted         => 'yes'
+                                      );
+    $config->save_file($config_file);
+}
+
 
 no Moose;
 1;

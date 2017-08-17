@@ -9,6 +9,7 @@ Build a configuration file for use with deago
 use Moose;
 use Getopt::Long qw(GetOptionsFromArray);
 use Config::General;
+#use Cwd;
 
 use Bio::Deago::BuildDeagoConfig;
 
@@ -71,7 +72,7 @@ sub BUILD {
 	}
 
 	if( !defined($targets_file) ) {
-		$self->_error_message("Error: You need to provide a targets_file");
+		$self->_error_message("Error: You need to provide a targets file");
 	} else {
 		$self->targets_file($targets_file);
 	}

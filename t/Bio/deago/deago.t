@@ -6,7 +6,7 @@ BEGIN { unshift( @INC, './lib' ) }
 BEGIN { unshift( @INC, './t/lib' ) }
 
 BEGIN {
-    use Test::Most;
+    use Test::Most tests => 1;
     use_ok('Bio::Deago');
 }
 

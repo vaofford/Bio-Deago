@@ -40,7 +40,7 @@ sub BUILD {
 		'r|results_directory=s' => \$results_directory,
 		'a|annotation_file=s'		=> \$annotation_file,
 		'control=s'							=> \$control,
-		'q|qvalue=i'						=> \$qvalue,
+		'q|qvalue=f'						=> \$qvalue,
 		'keep_images'			      => \$keep_images,
 		'qc|qc_only'						=> \$qc_only,
 		'go|go_analysis'				=> \$go_analysis,
@@ -77,11 +77,15 @@ sub BUILD {
 		$self->targets_file($targets_file);
 	}
 
-	$self->annotation_file($annotation_file) if ( defined($annotation_file) );
-	$self->control($control) if ( defined($control) );
-
-	$self->output_directory( $output_directory =~ s/\/$//r ) if( defined($output_directory) );
-	$self->output_file( $output_file ) if( defined($output_file) );
+	$self->results_directory($results_directory) 							if ( defined($results_directory) );
+	$self->annotation_file($annotation_file) 									if ( defined($annotation_file) );
+	$self->control($control) 																	if ( defined($control) );
+	$self->qvalue($qvalue) 																		if ( defined($qvalue) );
+	$self->keep_images($keep_images) 													if ( defined($keep_images) );
+	$self->qc_only($qc_only) 																	if ( defined($qc_only) );
+	$self->go_analysis($go_analysis) 													if ( defined($go_analysis) );
+	$self->output_file( $output_file ) 												if ( defined($output_file) );
+	$self->output_directory( $output_directory =~ s/\/$//r ) 	if ( defined($output_directory) );
 
 	my $config_file = $self->output_directory . "/" . $self->output_file;
 	$self->config_file($config_file) if ( defined($config_file) );
@@ -124,7 +128,7 @@ Options: -c STR        directory containing count files
          -o STR        output filename [deago.config]
          -d STR        output directory for config file [.]
          -a STR        annotation file 
-         -q INT        qvalue (DESeq2) [0.05]
+         -q NUM        qvalue (DESeq2) [0.05]
          --control     name of control condition (must be present in targets file)
          --keep_images keep images used in report [0]
          --qc          QC only [0]

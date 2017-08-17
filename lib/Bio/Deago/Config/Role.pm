@@ -43,38 +43,61 @@ sub _build_config {
 
 sub _counts_directory_exists {
 	my ($self) = @_;
-
-	if ( defined($self->counts_directory && -d $self->counts_directory) ){
-		return 1;
-	}	else {
-		return 0;
-	}
+	( defined($self->counts_directory) && -d $self->counts_directory ) ? return 1 : return 0;
 }
 
-sub _counts_directory_exists {
+sub _targets_file_exists {
+	my ($self) = @_;
+	( defined($self->targets_file) && -e $self->targets_file ) ? return 1 : return 0;
+}
+
+sub _results_directory_exists {
+	my ($self) = @_;
+	( defined($self->results_directory) && -d $self->results_directory ) ? return 1 : return 0;
+}
+
+sub _annotation_file_exists {
+	my ($self) = @_;
+	( defined($self->annotation_file) && -e $self->annotation_file ) ? return 1 : return 0;
+}
+
+sub _qvalue_is_valid {
+	my ($self) = @_;
+	( $self->qvalue >= 0 && $self->qvalue <= 1 ) ? return 1 : return 0;
+}
+
+sub _go_analysis_is_valid {
+	my ($self) = @_;
+	( $self->go_analysis == 1 && $self->_annotation_file_exists == 1 ) ? return 1 : return 0;
+}
+
+sub _config_is_valid {
 	my ($self) = @_;
 
-	if ( -d $self->targets_file ){
-		return 1;
-	}	else {
-		return 0;
+	my $is_valid = 0;
+
+	$is_valid = $self->_counts_directory_exists;
+	$is_valid = $self->_targets_file_exists;
+	$is_valid = $self->_results_directory_exists;
+	$is_valid = $self->_qvalue_is_valid;
+
+	if ( defined($self->annotation_file) ) {
+		$is_valid = $self->_annotation_file_exists;
 	}
+
+	if ( $self->go_analysis == 1 ) {
+		$is_valid = $self->_go_analysis_is_valid;
+	}
+
+	return $is_valid;
 }
 
 sub validate_config {
 	my ($self) = @_;
 
-	
-	my $counts_directory_exists = $self->_counts_directory_exists;
-	my $targets_file_exists = $self->_targets_file_exists
-	#print Dumper();
+	#print Dumper($self);
+	$self->_config_is_valid ? return 1 : return 0;
 
-
-	if ($counts_directory_exists) {
-		return 1;
-	} else {
-		return 0;
-	}
 }	
 
 1;

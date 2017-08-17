@@ -92,8 +92,8 @@ sub _config_is_valid {
 
 sub validate_config {
 	my ($self) = @_;
-	
-	$self->_config_is_valid ? return 1 : return 0;
+
+	return $self->_config_is_valid;
 }	
 
 1;

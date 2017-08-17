@@ -4,6 +4,7 @@ use Moose::Role;
 use namespace::autoclean;
 use Cwd;
 use Config::General;
+use Data::Dumper;
 
 has 'counts_directory'  => ( is => 'rw', isa => 'Str');
 has 'targets_file' 	   	=> ( is => 'rw', isa => 'Str');
@@ -15,8 +16,8 @@ has 'keep_images'   		=> ( is => 'rw', isa => 'Bool', 						default => 0);
 has 'qc_only'  					=> ( is => 'rw', isa => 'Bool', 						default => 0);
 has 'go_analysis' 			=> ( is => 'rw', isa => 'Bool', 						default => 0);
 has 'config_file'				=> ( is => 'rw', isa => 'Str', 							default => './default.config');
-has 'config_hash'				=> ( is => 'ro', isa => 'Config::General',	lazy => 1, 										builder => '_build_config' );
-has 'is_valid' 					=> ( is => 'ro', isa => 'Bool', 						builder => 'validate_config' );
+has 'config_hash'				=> ( is => 'ro', isa => 'Config::General',	lazy => 1, 	builder => '_build_config' );
+has 'is_valid' 					=> ( is => 'ro', isa => 'Bool', 						lazy=>1, 		builder => 'validate_config' );
 
 sub _build_config {
 	my ($self) = @_;
@@ -43,7 +44,17 @@ sub _build_config {
 sub _counts_directory_exists {
 	my ($self) = @_;
 
-	if ( defined($self->counts_directory) ){
+	if ( defined($self->counts_directory && -d $self->counts_directory) ){
+		return 1;
+	}	else {
+		return 0;
+	}
+}
+
+sub _counts_directory_exists {
+	my ($self) = @_;
+
+	if ( -d $self->targets_file ){
 		return 1;
 	}	else {
 		return 0;
@@ -53,18 +64,17 @@ sub _counts_directory_exists {
 sub validate_config {
 	my ($self) = @_;
 
-	return 0;
+	
+	my $counts_directory_exists = $self->_counts_directory_exists;
+	my $targets_file_exists = $self->_targets_file_exists
+	#print Dumper();
 
-	#use Data::Dumper;
-	#print Dumper($self);
 
-	#print $self->ParseConfig("counts_directory");
-
-	#print $self->_counts_directory_exists;
-
-	#return 1 if ($self->_counts_directory_exists)
-	#use Data::Dumper;
-	#print Dumper($self);
+	if ($counts_directory_exists) {
+		return 1;
+	} else {
+		return 0;
+	}
 }	
 
 1;

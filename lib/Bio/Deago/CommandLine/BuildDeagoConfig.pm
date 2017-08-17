@@ -95,7 +95,11 @@ sub run {
 		die $self->usage_text;
 	}
 
+	#use Data::Dumper;
+	#print Dumper($self);
+
 	my $config = $self->config_hash();
+
 
 	if ( $self->is_valid() ) {
 		print "HELLO";

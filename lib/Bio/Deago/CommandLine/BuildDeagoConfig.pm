@@ -9,7 +9,6 @@ Build a configuration file for use with deago
 use Moose;
 use Getopt::Long qw(GetOptionsFromArray);
 use Config::General;
-use File::Basename;
 
 use Bio::Deago::BuildDeagoConfig;
 
@@ -17,7 +16,7 @@ extends 'Bio::Deago::CommandLine::Common';
 with 'Bio::Deago::Config::Role';
 
 has 'args'         			=> ( is => 'ro', isa => 'ArrayRef', required => 1 );
-#has 'script_name'  			=> ( is => 'ro', isa => 'Str',      required => 1 );
+has 'script_name'  			=> ( is => 'ro', isa => 'Str',      required => 1 );
 has 'help'         			=> ( is => 'rw', isa => 'Bool', 		default => 0 );
 
 has '_error_message' 		=> ( is => 'rw', isa => 'Str' );
@@ -99,21 +98,13 @@ sub run {
 		die $self->usage_text;
 	}
 
-	#use Data::Dumper;
-	#print Dumper($self);
-
-	my $config = $self->config_hash();
-
-
 	if ( $self->is_valid() ) {
-		print "HELLO";
+		my $config = $self->config_hash();
+		my $deago_config = Bio::Deago::BuildDeagoConfig->new( 'config' => $config, 'config_file' => $self->config_file );
+		$deago_config->build_config_file() or $self->logger->error( "Error: Could not write config file:" . $self->config_file);
+	} else {
+		$self->logger->error( "Error: Could not write config file, options are not valid");
 	}
-	#my $deago_config = Bio::Deago::BuildDeagoConfig->new( 'config' => $config );
-
-	#$deago_config->build_config_file();
-
-	#use Data::Dumper;
-	#print Dumper($deago_config->ParseConfig(""));
 }
 
 sub usage_text {

@@ -4,7 +4,6 @@ use Moose::Role;
 use namespace::autoclean;
 use Cwd;
 use Config::General;
-use Data::Dumper;
 
 has 'counts_directory'  => ( is => 'rw', isa => 'Str');
 has 'targets_file' 	   	=> ( is => 'rw', isa => 'Str');
@@ -33,8 +32,7 @@ sub _build_config {
 	$config_hash{'annotation_file'} = $self->annotation_file if ( defined($self->annotation_file) );
 	$config_hash{'control'} = $self->control if ( defined($self->control) );
 
-	my $config_obj = Config::General->new( 	-ConfigFile 				=> $self->config_file, 
-																					-ConfigHash 				=> \%config_hash, 
+	my $config_obj = Config::General->new(	-ConfigHash 				=> \%config_hash, 
 																					-AllowMultiOptions 	=> 'no'
 																				);
 
@@ -76,17 +74,17 @@ sub _config_is_valid {
 
 	my $is_valid = 0;
 
-	$is_valid = $self->_counts_directory_exists;
-	$is_valid = $self->_targets_file_exists;
-	$is_valid = $self->_results_directory_exists;
-	$is_valid = $self->_qvalue_is_valid;
+	$is_valid = (	$self->_counts_directory_exists &&
+								$self->_targets_file_exists &&
+								$self->_results_directory_exists &&
+								$self->_qvalue_is_valid);
 
 	if ( defined($self->annotation_file) ) {
-		$is_valid = $self->_annotation_file_exists;
+		$is_valid = ($is_valid && $self->_annotation_file_exists);
 	}
 
 	if ( $self->go_analysis == 1 ) {
-		$is_valid = $self->_go_analysis_is_valid;
+		$is_valid = ($is_valid && $self->_go_analysis_is_valid);
 	}
 
 	return $is_valid;
@@ -94,10 +92,8 @@ sub _config_is_valid {
 
 sub validate_config {
 	my ($self) = @_;
-
-	#print Dumper($self);
+	
 	$self->_config_is_valid ? return 1 : return 0;
-
 }	
 
 1;

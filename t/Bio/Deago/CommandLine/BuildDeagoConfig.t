@@ -46,7 +46,7 @@ build_test_config_file( 'expected_non_default_deago.config', \%default_config );
 
 my %scripts_and_expected_files = (
       '-t t/data/example_targets.tsv -c t/data/example_counts' => ['deago.config', 'expected_default_deago.config' ],
-      '-t t/data/example_targets.tsv -c t/data/example_counts -r t/data -a t/data/example_annotation.tsv -q 0.01 --go --qc --keep_images' => ['deago.config', 'expected_non_default_deago.config' ],
+      '-t t/data/example_targets.tsv -c t/data/example_counts -r t/data -a t/data/example_deago_annotation.tsv -q 0.01 --go --qc --keep_images' => ['deago.config', 'expected_non_default_deago.config' ],
       '-h' => [ 'empty_file', 't/data/empty_file' ],
 );
 
@@ -54,8 +54,10 @@ stdout_should_have($script_name,'', 'Error: You need to provide');
 stdout_should_have($script_name,'-c counts', 'Error: You need to provide a targets file');
 stdout_should_have($script_name,'-t targets.txt', 'Error: You need to provide a counts directory');
 stdout_should_have($script_name,'-c counts -t targets.txt 0', 'Error: You need to remove trailing arguements');
-stderr_should_have($script_name,'-c counts -t targets.txt', 'Error: Could not write config file, options are not valid');
-
+stderr_should_have($script_name,'-c counts -t t/data/example_targets.tsv', 'Error: Could not write config file, options are not valid');
+stderr_should_have($script_name,'-c t/data/counts -t targets.txt', 'Error: Could not write config file, options are not valid');
+stderr_should_have($script_name,'-c t/data/counts -t t/data/example_targets.tsv -r t/data/results1', 'Error: Could not write config file, options are not valid');
+stderr_should_have($script_name,'-c t/data/counts -t t/data/example_targets.tsv -q 5', 'Error: Could not write config file, options are not valid');
 stderr_should_have($script_name,'-c t/data/example_counts -t t/data/example_targets.tsv -q 5', 'Error: Could not write config file, options are not valid');
 stderr_should_have($script_name,'-c t/data/example_counts -t t/data/example_targets.tsv --go', 'Error: Could not write config file, options are not valid');
 stderr_should_have($script_name,'-c t/data/example_counts -t t/data/example_targets.tsv -a annotation', 'Error: Could not write config file, options are not valid');

@@ -9,7 +9,6 @@ Build a configuration file for use with deago
 use Moose;
 use Getopt::Long qw(GetOptionsFromArray);
 use Config::General;
-#use Cwd;
 
 use Bio::Deago::BuildDeagoConfig;
 
@@ -114,6 +113,7 @@ sub usage_text {
 	return <<USAGE;
 Usage: build_deago_config [options]
 Builds a tab-delimited key/value config file for use with deago
+
 Options: -c STR        directory containing count files
          -t STR        targets file
          -r STR        results directory [current working directory]

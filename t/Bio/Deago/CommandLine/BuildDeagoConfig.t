@@ -39,10 +39,10 @@ my %non_default_config = 	(	'counts_directory'	=> 't/data/example_counts',
 														'qvalue'						=> 0.01,
 														'results_directory'	=> 't/data',
 														'targets_file'			=> 't/data/example_targets.tsv',
-														'annotation_file'		=> 't/data/example_annotation.tsv'
+														'annotation_file'		=> 't/data/example_deago_annotation.tsv'
 													);
 
-build_test_config_file( 'expected_non_default_deago.config', \%default_config );
+build_test_config_file( 'expected_non_default_deago.config', \%non_default_config );
 
 my %scripts_and_expected_files = (
       '-t t/data/example_targets.tsv -c t/data/example_counts' => ['deago.config', 'expected_default_deago.config' ],

@@ -1,0 +1,7 @@
+Gene stable ID	GO term accession
+Smp_000020	gene1;gene2	GO:0009100;GO:0016231
+Smp_000040	gene1	GO:0003777;GO:0005871
+Smp_000050	gene1;gene2	GO:0016020
+Smp_000070		GO:0016020;GO:0016021
+Smp_000075	gene1;gene2	
+Smp_000080		

@@ -65,6 +65,9 @@ sub _collapse_annotation {
 sub _convert_annotation {
 	my ($self) = @_;
 
+	use Data::Dumper;
+	print Dumper($self);
+
 	( defined($self->output_filename) && -d dirname($self->output_filename) ) or die "Error: Could not find output directory for annotation file: " . $self->output_filename;
 	
 	my $annotation = $self->_collapse_annotation();

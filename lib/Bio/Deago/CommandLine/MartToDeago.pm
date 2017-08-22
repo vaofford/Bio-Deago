@@ -23,6 +23,7 @@ has 'annotation_file' 	=> ( is => 'rw', isa => 'Str');
 has 'separator' 				=> ( is => 'rw', isa => 'Str', 			default => "\t");
 has 'output_file' 			=> ( is => 'rw', isa => 'Str', 			default=>'deago_annotation.tsv');
 has 'output_directory'	=> ( is => 'rw', isa => 'Str', 			default => '.' );
+has 'output_filename'		=> ( is => 'rw', isa => 'Str', 			default => './deago_annotation.tsv');
 
 sub BUILD {
 	my ($self) = @_;
@@ -67,6 +68,11 @@ sub BUILD {
 	$self->output_file( $output_file ) 												if ( defined($output_file) );
 	$self->output_directory( $output_directory =~ s/\/$//r ) 	if ( defined($output_directory) );
 
+	$self->output_file( $output_file ) 												if ( defined($output_file) );
+	$self->output_directory( $output_directory =~ s/\/$//r ) 	if ( defined($output_directory) );
+
+	my $output_filename = $self->output_directory . "/" . $self->output_file;
+	$self->output_filename($output_filename) if ( defined($output_filename) );
 }
 
 sub run {
@@ -79,8 +85,8 @@ sub run {
 
 	my $obj = Bio::Deago::MartToDeago->new(
             	annotation_file	=> $self->annotation_file,
-            	output_filename	=> $self->output_directory . '/' . $self->output_file,
-            	separator				=> $self->separator,
+            	output_filename	=> $self->output_filename,
+            	separator				=> $self->separator
    					);
 	$obj->convert_annotation() or $self->logger->error( "Error: Could not write annotation file:" . $self->annotation_file);
 }

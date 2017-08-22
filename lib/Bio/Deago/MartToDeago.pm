@@ -8,13 +8,13 @@ use List::MoreUtils qw(uniq);
 no warnings 'uninitialized';
 
 has 'annotation_file' 			=> ( is => 'ro', isa => 'Str', 	required => 1);
-has 'output_filename'			=> ( is => 'ro', isa => 'Str', 							default => "./deago_annotation.tsv");
-has 'separator'						=> ( is => 'ro', isa => 'Str', 							default => "\t");
+has 'output_filename'			=> ( is => 'ro', isa => 'Str', 		default => "./deago_annotation.tsv");
+has 'separator'						=> ( is => 'ro', isa => 'Str', 		default => "\t");
 has 'convert_annotation'	=> ( is => 'ro', isa => 'Bool', lazy => 1, 	builder => '_convert_annotation' );
 
 sub _annotation_file_exists {
 	my ($self) = @_;
-	( defined($self->annotation_file) && -e $self->annotation_file ) ? return 1 : return 0;
+	( defined($self->output_filename) && -e $self->output_filename ) ? return 1 : return 0;
 }
 
 sub _collapse_annotation {
@@ -64,9 +64,6 @@ sub _collapse_annotation {
 
 sub _convert_annotation {
 	my ($self) = @_;
-
-	use Data::Dumper;
-	print Dumper($self);
 
 	( defined($self->output_filename) && -d dirname($self->output_filename) ) or die "Error: Could not find output directory for annotation file: " . $self->output_filename;
 	

@@ -1,44 +1,44 @@
-package Bio::Deago::CommandLine::MartToDeago;
+package Bio::Deago::CommandLine::BuildMarkdown;
 
-# ABSTRACT: Convert a tab-delimited annotation file (e.g. from BioMart) for use with deago
+# ABSTRACT: Build a master R Markdown file from templates
 
 =head1 SYNOPSIS
-Convert a tab-delimited annotation file (e.g. from BioMart) for use with deago
+Build a master R Markdown file from templates
 =cut
 
 use Moose;
 use Getopt::Long qw(GetOptionsFromArray);
 
-use Bio::Deago::MartToDeago;
+#use Bio::Deago::BuildMarkdown;
 
 extends 'Bio::Deago::CommandLine::Common';
 
-has 'args'         			=> ( is => 'ro', isa => 'ArrayRef', required => 1 );
-has 'script_name'  			=> ( is => 'ro', isa => 'Str',      required => 1 );
-has 'help'         			=> ( is => 'rw', isa => 'Bool', 		default => 0 );
+has 'args'         				=> ( is => 'ro', isa => 'ArrayRef', required => 1 );
+has 'script_name'  				=> ( is => 'ro', isa => 'Str',      required => 1 );
+has 'help'         				=> ( is => 'rw', isa => 'Bool', 		default => 0 );
 
-has '_error_message' 		=> ( is => 'rw', isa => 'Str' );
-has 'verbose' 					=> ( is => 'rw', isa => 'Bool', 		default => 0 );
-has 'annotation_file' 	=> ( is => 'rw', isa => 'Str');
-has 'separator' 				=> ( is => 'rw', isa => 'Str', 			default => "\t");
-has 'output_file' 			=> ( is => 'rw', isa => 'Str', 			default=>'deago_annotation.tsv');
-has 'output_directory'	=> ( is => 'rw', isa => 'Str', 			default => '.' );
-has 'output_filename'		=> ( is => 'rw', isa => 'Str', 			default => './deago_annotation.tsv');
+has '_error_message' 			=> ( is => 'rw', isa => 'Str' );
+has 'verbose' 						=> ( is => 'rw', isa => 'Bool', 		default => 0 );
+has 'config_file' 				=> ( is => 'rw', isa => 'Str');
+has 'template_directory' 	=> ( is => 'rw', isa => 'Str', 			default => "markdown_templates");
+has 'output_file' 			=> ( is => 'rw', isa => 'Str', 				default=>'deago_markdown.Rmd');
+has 'output_directory'	=> ( is => 'rw', isa => 'Str', 				default => '.' );
+has 'output_filename'		=> ( is => 'rw', isa => 'Str', 				default => './deago_markdown.Rmd');
 
 sub BUILD {
 	my ($self) = @_;
 
-	my ( $help, $verbose, $cmd_version, $output_file, $output_directory, $annotation_file, $separator );
+	my ( $help, $verbose, $cmd_version, $config_file, $template_directory, $output_directory, $output_file);
 
 	GetOptionsFromArray(
 		$self->args,
-		'v|verbose'           	=> \$verbose,
-		'o|output_file=s'     	=> \$output_file,
-		'd|output_directory=s'	=> \$output_directory,
-		'a|annotation_file=s'		=> \$annotation_file,
-		's|separator=s'					=> \$separator,
-		'w|version'             => \$cmd_version,
-		'h|help'                => \$help
+		'v|verbose'           		=> \$verbose,
+		'o|output_file=s'     		=> \$output_file,
+		'd|output_directory=s'		=> \$output_directory,
+		't|template_directory=s'	=> \$template_directory,
+		'c|config_file=s'					=> \$config_file,
+		'w|version'             	=> \$cmd_version,
+		'h|help'                	=> \$help
 	);
 
 	if ( defined($verbose) ) {
@@ -58,13 +58,13 @@ sub BUILD {
 		$self->_error_message("Error: You need to remove trailing arguements");
 	}
 
-	if( !defined($annotation_file) ) {
-		$self->_error_message("Error: You need to provide an annotation file");
+	if( !defined($config_file) ) {
+		$self->_error_message("Error: You need to provide a config file");
 	} else {
-		$self->annotation_file($annotation_file);
+		$self->config_file($config_file);
 	}
 
-	$self->separator( $separator ) 														if ( defined($separator) );
+	$self->template_directory( $template_directory ) 					if ( defined($template_directory) );
 	$self->output_file( $output_file ) 												if ( defined($output_file) );
 	$self->output_directory( $output_directory =~ s/\/$//r ) 	if ( defined($output_directory) );
 
@@ -80,12 +80,7 @@ sub run {
 		die $self->usage_text;
 	}
 
-	my $obj = Bio::Deago::MartToDeago->new(
-            	annotation_file	=> $self->annotation_file,
-            	output_filename	=> $self->output_filename,
-            	separator				=> $self->separator
-   					);
-	$obj->convert_annotation() or $self->logger->error( "Error: Could not write annotation file:" . $self->annotation_file);
+
 }
 
 sub usage_text {

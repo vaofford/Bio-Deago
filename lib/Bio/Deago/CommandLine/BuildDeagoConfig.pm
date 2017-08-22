@@ -101,9 +101,9 @@ sub run {
 	if ( $self->is_valid() ) {
 		my $config = $self->config_hash();
 		my $deago_config = Bio::Deago::BuildDeagoConfig->new( 'config' => $config, 'config_file' => $self->config_file );
-		$deago_config->build_config_file() or $self->logger->error( "Error: Could not write config file:" . $self->config_file);
+		$deago_config->build_config_file() or $self->logger->error("Error: Could not write config file:" . $self->config_file);
 	} else {
-		$self->logger->error( "Error: Could not write config file, options are not valid");
+		$self->logger->error("Error: Could not write config file, options are not valid");
 	}
 }
 

@@ -38,7 +38,7 @@ sub mock_execute_script_and_check_output {
 
             compare_ok( $actual_output_file_name, $expected_output_file_name, "Actual and expected output match for '$script_parameters'" );
 
-            #unlink($actual_output_file_name);
+            unlink($actual_output_file_name);
         }
         close STDOUT;
         close STDERR;

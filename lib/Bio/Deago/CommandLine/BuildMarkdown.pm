@@ -9,7 +9,7 @@ Build a master R Markdown file from templates
 use Moose;
 use Getopt::Long qw(GetOptionsFromArray);
 
-#use Bio::Deago::BuildMarkdown;
+use Bio::Deago::BuildMarkdown;
 
 extends 'Bio::Deago::CommandLine::Common';
 
@@ -19,11 +19,11 @@ has 'help'         				=> ( is => 'rw', isa => 'Bool', 		default => 0 );
 
 has '_error_message' 			=> ( is => 'rw', isa => 'Str' );
 has 'verbose' 						=> ( is => 'rw', isa => 'Bool', 		default => 0 );
-has 'config_file' 				=> ( is => 'rw', isa => 'Str');
-has 'template_directory' 	=> ( is => 'rw', isa => 'Str', 			default => "markdown_templates");
-has 'output_file' 			=> ( is => 'rw', isa => 'Str', 				default=>'deago_markdown.Rmd');
-has 'output_directory'	=> ( is => 'rw', isa => 'Str', 				default => '.' );
-has 'output_filename'		=> ( is => 'rw', isa => 'Str', 				default => './deago_markdown.Rmd');
+has 'config_file' 				=> ( is => 'rw', isa => 'Str',			default => 'deago.config');
+has 'template_directory' 	=> ( is => 'rw', isa => 'Str', 			default => 'markdown_templates');
+has 'output_file' 				=> ( is => 'rw', isa => 'Str', 			default=>'deago_markdown.Rmd');
+has 'output_directory'		=> ( is => 'rw', isa => 'Str', 			default => '.' );
+has 'output_filename'			=> ( is => 'rw', isa => 'Str', 			default => './deago_markdown.Rmd');
 
 sub BUILD {
 	my ($self) = @_;
@@ -58,12 +58,7 @@ sub BUILD {
 		$self->_error_message("Error: You need to remove trailing arguements");
 	}
 
-	if( !defined($config_file) ) {
-		$self->_error_message("Error: You need to provide a config file");
-	} else {
-		$self->config_file($config_file);
-	}
-
+	$self->config_file( $config_file ) 												if ( defined($config_file) );
 	$self->template_directory( $template_directory ) 					if ( defined($template_directory) );
 	$self->output_file( $output_file ) 												if ( defined($output_file) );
 	$self->output_directory( $output_directory =~ s/\/$//r ) 	if ( defined($output_directory) );
@@ -80,56 +75,27 @@ sub run {
 		die $self->usage_text;
 	}
 
-
+	my $obj = Bio::Deago::BuildMarkdown->new(
+            	config_file					=> $self->config_file,
+            	output_filename			=> $self->output_filename,
+            	template_directory	=> $self->template_directory
+   					);
+	$obj->build_markdown() or $self->logger->error( "Error: Could not build markdown file:" . $self->output_filename);
 }
 
 sub usage_text {
 	my ($self) = @_;
 
 	return <<USAGE;
-Usage: mart_to_deago [options]
-Converts a tab-delimited annotation file (e.g. from BioMart) for use with deago
+Usage: build_markdown [options]
+Builds a master R markdown file from templates based on parameters in a DEAGO config file
 
 Options: -o STR        output filename [deago_annotation.tsv]
          -d STR        output directory for annnotation file [.]
-         -s STR        input file field separator [\t]
+         -t STR        R markdown template directory [markdown_templates]
          -v            verbose output to STDOUT
          -w            print version and exit
          -h            this help message
-
-Description:
-
-Converts a tab-delimited file (e.g. from BioMart) for use with the RNA-Seq expression 
-analysis pipeline (DEAGO).  Output is a tab delimited file where each row represents 
-a unique value from the first column (assumed to be the gene id for DEAGO). Remaining 
-column values from rows sharing the same unique identifier are collapsed and 
-semi-colon separated (;).
-
-# Example for human
- 1) Go to http://www.ensembl.org/biomart/martview
- 2) Select dataset e.g. Ensembl Genes 87
- 3) Select Gene ID, Associated Gene Name and GO Term Accession from Attributes
- 4) Download as TSV
- 5) Provide TSV annotation file to script using prepare_deago_annotation.pl -a my_annotation.tsv
-
-Example input file contents:
-
-Gene stable ID	Gene	GO term accession
-Smp_000080	gene1	GO:0016020
-Smp_000080	gene2	GO:0016021
-Smp_000080	gene2	GO:0005515
-Smp_000090	gene1	
-Smp_000100	gene1	GO:0051015
-Smp_000100	gene1	GO:0005515
-Smp_000110              GO:0005515
-
-Example output file contents:
-
-Gene stable ID	Gene	GO term accession
-Smp_000080	gene1;gene2	GO:0016020;GO:0005515;GO:0016021
-Smp_000090	gene1
-Smp_000100	gene1	GO:0051015;GO:0005515
-Smp_000110		GO:0005515
 
 USAGE
 }

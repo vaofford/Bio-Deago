@@ -85,9 +85,12 @@ sub BUILD {
 	$self->go_analysis($go_analysis) 													if ( defined($go_analysis) );
 	$self->output_file( $output_file ) 												if ( defined($output_file) );
 	$self->output_directory( $output_directory =~ s/\/$//r ) 	if ( defined($output_directory) );
-
+	
 	my $config_file = $self->output_directory . "/" . $self->output_file;
 	$self->config_file($config_file) if ( defined($config_file) );
+
+	my $config_hash = $self->build_config_hash();
+	$self->config_hash($config_hash) if ( defined($config_hash) );
 }
 
 sub run {
@@ -99,8 +102,7 @@ sub run {
 	}
 
 	if ( $self->is_valid() ) {
-		my $config = $self->config_hash();
-		my $deago_config = Bio::Deago::BuildDeagoConfig->new( 'config' => $config, 'config_file' => $self->config_file );
+		my $deago_config = Bio::Deago::BuildDeagoConfig->new( 'config' => $self->config_hash, 'config_file' => $self->config_file );
 		$deago_config->build_config_file() or $self->logger->error("Error: Could not write config file:" . $self->config_file);
 	} else {
 		$self->logger->error("Error: Could not write config file, options are not valid");

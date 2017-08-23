@@ -15,10 +15,10 @@ has 'keep_images'   		=> ( is => 'rw', isa => 'Bool', 						default => 0);
 has 'qc_only'  					=> ( is => 'rw', isa => 'Bool', 						default => 0);
 has 'go_analysis' 			=> ( is => 'rw', isa => 'Bool', 						default => 0);
 has 'config_file'				=> ( is => 'rw', isa => 'Str', 							default => './default.config');
-has 'config_hash'				=> ( is => 'ro', isa => 'Config::General',	lazy => 1, 	builder => '_build_config' );
+has 'config_hash'				=> ( is => 'rw', isa => 'Config::General');
 has 'is_valid' 					=> ( is => 'ro', isa => 'Bool', 						lazy=>1, 		builder => 'validate_config' );
 
-sub _build_config {
+sub build_config_hash {
 	my ($self) = @_;
 	my %config_hash = ( 'counts_directory' 	=> $self->counts_directory,
 											'targets_file' 			=> $self->targets_file,
@@ -36,38 +36,37 @@ sub _build_config {
 																					-AllowMultiOptions 	=> 'no',
 																					-SaveSorted 				=> 'yes'
 																				);
-
 	return($config_obj);
 }
 
 sub _counts_directory_exists {
 	my ($self) = @_;
-	( defined($self->counts_directory) && -d $self->counts_directory ) ? return 1 : return 0;
+	( defined($self->config_hash->{'config'}{'counts_directory'}) && -d $self->config_hash->{'config'}{'counts_directory'} ) ? return 1 : return 0;
 }
 
 sub _targets_file_exists {
 	my ($self) = @_;
-	( defined($self->targets_file) && -e $self->targets_file ) ? return 1 : return 0;
+	( defined($self->config_hash->{'config'}{'targets_file'}) && -e $self->config_hash->{'config'}{'targets_file'} ) ? return 1 : return 0;
 }
 
 sub _results_directory_exists {
 	my ($self) = @_;
-	( defined($self->results_directory) && -d $self->results_directory ) ? return 1 : return 0;
+	( defined($self->config_hash->{'config'}{'results_directory'}) && -d $self->config_hash->{'config'}{'results_directory'} ) ? return 1 : return 0;
 }
 
 sub _annotation_file_exists {
 	my ($self) = @_;
-	( defined($self->annotation_file) && -e $self->annotation_file ) ? return 1 : return 0;
+	( defined($self->config_hash->{'config'}{'annotation_file'}) && -e $self->config_hash->{'config'}{'annotation_file'} ) ? return 1 : return 0;
 }
 
 sub _qvalue_is_valid {
 	my ($self) = @_;
-	( $self->qvalue >= 0 && $self->qvalue <= 1 ) ? return 1 : return 0;
+	( $self->config_hash->{'config'}{'qvalue'} >= 0 && $self->config_hash->{'config'}{'qvalue'} <= 1 ) ? return 1 : return 0;
 }
 
 sub _go_analysis_is_valid {
 	my ($self) = @_;
-	( $self->go_analysis == 1 && $self->_annotation_file_exists == 1 ) ? return 1 : return 0;
+	( $self->config_hash->{'config'}{'go_analysis'} == 1 && $self->_annotation_file_exists == 1 ) ? return 1 : return 0;
 }
 
 sub _config_is_valid {

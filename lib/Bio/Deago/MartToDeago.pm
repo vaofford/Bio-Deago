@@ -46,7 +46,7 @@ sub _annotation_file_exists {
 sub _collapse_annotation {
 	my ($self) = @_;
 	my $separator = $self->separator;
-	my (%split_annotations, @collapsed_annotations);
+	my (%split_annotations, @collapsed_annotations, $header);
 
 	my @annotations = @{ $self->annotations };
 	foreach (@annotations)
@@ -66,16 +66,22 @@ sub _collapse_annotation {
 	foreach my $identifier (sort keys %split_annotations)
 	{
 		my $line=$identifier;
+
 		foreach my $column (sort keys %{$split_annotations{$identifier}})
 		{
-			 $line .= "\t" . join(";", sort keys %{$split_annotations{$identifier}{$column}});
+			$line .= "\t" . join(";", sort keys %{$split_annotations{$identifier}{$column}});
 		}
-
 		$line =~ s/undefined_value//g;
-
-		push(@collapsed_annotations, $line);
-			
+		
+		if ($line !~ /Gene stable ID/)
+		{	
+			push(@collapsed_annotations, $line);
+		} else {
+			$header = $line;
+		}
 	}
+
+	unshift(@collapsed_annotations, $header);
 
 	my $annotation = join("\n", @collapsed_annotations);
 

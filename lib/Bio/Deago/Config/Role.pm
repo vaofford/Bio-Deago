@@ -4,6 +4,7 @@ use Moose::Role;
 use namespace::autoclean;
 use Cwd;
 use Config::General;
+use Bio::Deago::Exceptions;
 
 has 'counts_directory'  => ( is => 'rw', isa => 'Str');
 has 'targets_file' 	   	=> ( is => 'rw', isa => 'Str');
@@ -16,7 +17,7 @@ has 'qc_only'  					=> ( is => 'rw', isa => 'Bool', 						default => 0);
 has 'go_analysis' 			=> ( is => 'rw', isa => 'Bool', 						default => 0);
 has 'config_file'				=> ( is => 'rw', isa => 'Str', 							default => './default.config');
 has 'config_hash'				=> ( is => 'rw', isa => 'Config::General');
-has 'is_valid' 					=> ( is => 'ro', isa => 'Bool', 						lazy=>1, 		builder => 'validate_config' );
+has 'config_is_valid' 	=> ( is => 'ro', isa => 'Bool', 						lazy=>1, 		builder => 'validate_config' );
 
 sub build_config_hash {
 	my ($self) = @_;
@@ -37,6 +38,17 @@ sub build_config_hash {
 																					-SaveSorted 				=> 'yes'
 																				);
 	return($config_obj);
+}
+
+sub read_config_file {
+	my ($self) = @_;
+
+	Bio::Deago::Exceptions::FileNotFound->throw( error => "Error: Cannot find config file: " . $self->config_file . "\n") 
+		unless ( -e $self->config_file );
+
+	my $config_obj = Config::General->new($self->config_file);
+
+	$self->config_hash($config_obj);
 }
 
 sub _counts_directory_exists {

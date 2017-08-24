@@ -1,0 +1,10 @@
+Condition	Replicate	Filename
+0C	1	file1.featurecounts.csv
+0B	1	file2.featurecounts.csv
+0A	1	file3.featurecounts.csv
+0C	2	file4.featurecounts.csv
+0B	2	file5.featurecounts.csv
+0A	2	file6.featurecounts.csv
+0C	3	file7.featurecounts.csv
+0B	3	file8.featurecounts.csv
+0A	3	file9.featurecounts.csv

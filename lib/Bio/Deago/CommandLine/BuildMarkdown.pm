@@ -19,8 +19,8 @@ has 'help'         				=> ( is => 'rw', isa => 'Bool', 		default => 0 );
 
 has '_error_message' 			=> ( is => 'rw', isa => 'Str' );
 has 'verbose' 						=> ( is => 'rw', isa => 'Bool', 		default => 0 );
+has 'template_files' 			=> ( is => 'rw', isa => 'ArrayRef' );
 has 'config_file' 				=> ( is => 'rw', isa => 'Str',			default => 'deago.config');
-has 'template_directory' 	=> ( is => 'rw', isa => 'Str', 			default => 'markdown_templates');
 has 'output_file' 				=> ( is => 'rw', isa => 'Str', 			default=>'deago_markdown.Rmd');
 has 'output_directory'		=> ( is => 'rw', isa => 'Str', 			default => '.' );
 has 'output_filename'			=> ( is => 'rw', isa => 'Str', 			default => './deago_markdown.Rmd');
@@ -28,14 +28,13 @@ has 'output_filename'			=> ( is => 'rw', isa => 'Str', 			default => './deago_ma
 sub BUILD {
 	my ($self) = @_;
 
-	my ( $help, $verbose, $cmd_version, $config_file, $template_directory, $output_directory, $output_file);
+	my ( $help, $verbose, $cmd_version, $config_file, $template_files, $output_directory, $output_file);
 
 	GetOptionsFromArray(
 		$self->args,
 		'v|verbose'           		=> \$verbose,
 		'o|output_file=s'     		=> \$output_file,
 		'd|output_directory=s'		=> \$output_directory,
-		't|template_directory=s'	=> \$template_directory,
 		'c|config_file=s'					=> \$config_file,
 		'w|version'             	=> \$cmd_version,
 		'h|help'                	=> \$help
@@ -54,17 +53,18 @@ sub BUILD {
 		die($self->_version());
 	}
 
-	if ( @{ $self->args } > 0 ) {
-		$self->_error_message("Error: You need to remove trailing arguements");
+	if ( @{ $self->args } == 0 ) {
+		$self->_error_message("Error: You need to provide at least one template file");
 	}
 
 	$self->config_file( $config_file ) 												if ( defined($config_file) );
-	$self->template_directory( $template_directory ) 					if ( defined($template_directory) );
 	$self->output_file( $output_file ) 												if ( defined($output_file) );
 	$self->output_directory( $output_directory =~ s/\/$//r ) 	if ( defined($output_directory) );
 
 	my $output_filename = $self->output_directory . "/" . $self->output_file;
 	$self->output_filename($output_filename) if ( defined($output_filename) );
+
+	$self->template_files( $self->args );
 }
 
 sub run {
@@ -78,7 +78,7 @@ sub run {
 	my $obj = Bio::Deago::BuildMarkdown->new(
             	config_file					=> $self->config_file,
             	output_filename			=> $self->output_filename,
-            	template_directory	=> $self->template_directory
+            	template_files			=> $self->template_files
    					);
 	$obj->build_markdown() or $self->logger->error( "Error: Could not build markdown file:" . $self->output_filename);
 }
@@ -87,12 +87,13 @@ sub usage_text {
 	my ($self) = @_;
 
 	return <<USAGE;
-Usage: build_markdown [options]
-Builds a master R markdown file from templates based on parameters in a DEAGO config file
+Usage: build_markdown [options] *.Rmd
+Takes in R markdown template files and builds a master markdown file using parameters in config file.  
+T emplates will be added in the order they are given.
 
-Options: -o STR        output filename [deago_annotation.tsv]
+Options: -c STR        DEAGO config file [deago.config]
+         -o STR        output filename [deago_markdown.Rmd]
          -d STR        output directory for annnotation file [.]
-         -t STR        R markdown template directory [markdown_templates]
          -v            verbose output to STDOUT
          -w            print version and exit
          -h            this help message

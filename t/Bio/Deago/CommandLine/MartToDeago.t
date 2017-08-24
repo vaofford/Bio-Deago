@@ -21,18 +21,18 @@ my $cwd         = getcwd();
 system('touch empty_file');
 
 my %scripts_and_expected_files = (
-      '-a t/data/example_mart_annotation.tsv' => ['deago_annotation.tsv', 't/data/example_deago_annotation.tsv' ],
-      '-a t/data/example_mart_annotation.tsv -o deago.out.tsv' => ['deago.out.tsv', 't/data/example_deago_annotation.tsv' ],
+      '-a t/data/example_mart_annotation_short.tsv' => ['deago_annotation.tsv', 't/data/example_deago_annotation_short.tsv' ],
+      '-a t/data/example_mart_annotation_short.tsv -o deago.out.tsv' => ['deago.out.tsv', 't/data/example_deago_annotation_short.tsv' ],
       '-h' => [ 'empty_file', 't/data/empty_file' ],
 );
 
 stdout_should_have($script_name,'', 'Error: You need to provide an annotation file');
-stdout_should_have($script_name,'-a t/data/example_mart_annotation.tsv 0', 'Error: You need to remove trailing arguements');
+stdout_should_have($script_name,'-a t/data/example_mart_annotation_short.tsv 0', 'Error: You need to remove trailing arguements');
 
 
 throws_ok{
     Bio::Deago::MartToDeago->new(
-        annotation_file	=> 't/data/example_mart_annotation.tsv',
+        annotation_file	=> 't/data/example_mart_annotation_short.tsv',
         output_filename	=> 'non_existant_directory/deago_annotation.tsv')
 } qr /Error: Could not find output directory for annotation file:/, 'non existant output directory should throw an error';
 
@@ -43,17 +43,9 @@ throws_ok{
 
 throws_ok{
     Bio::Deago::MartToDeago->new(
-        annotation_file	=> 't/data/example_mart_annotation.tsv',
+        annotation_file	=> 't/data/example_mart_annotation_short.tsv',
         separator 			=> ';')
 } qr /Error: Could not collapse annotation, only found one column. Check separator./, 'non existant annotation file should throw an error';
-
-
-
-
-#stderr_should_have($script_name,'-a t/data/example_mart_annotation.tsv -d non_existant_directory', 'Error: Could not find output directory for annotation file:');
-#stderr_should_have($script_name,'-a non_existant_annotation.tsv', 'Couldn\'t open');
-#stdout_should_have($script_name,'-a t/data/example_mart_annotation.tsv -s ";"', 'Error: Could not collapse annotation, only found one column. Check separator.');
-
 
 mock_execute_script_and_check_output( $script_name, \%scripts_and_expected_files );
 

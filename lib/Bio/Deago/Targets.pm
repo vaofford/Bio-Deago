@@ -3,7 +3,6 @@ package Bio::Deago::Targets;
 use Moose;
 use File::Slurper qw(read_lines);
 use Text::CSV::Hashify;
-use List::Util 'first';
 
 use Data::Dumper;
 
@@ -17,8 +16,11 @@ sub BUILD {
 
 	$self->targets_file($self->config_hash->{'config'}{'targets_file'});
 
-	Bio::Deago::Exceptions::FileNotFound->throw( error => "Error: Cannot find targets_file file: " . $self->targets_file . "\n") 
+	Bio::Deago::Exceptions::FileNotFound->throw( error => "Error: Cannot find targets file: " . $self->targets_file . "\n") 
 		unless ( defined($self->targets_file) && -e $self->targets_file );
+
+	Bio::Deago::Exceptions::DirectoryNotFound->throw( error => "Error: Cannot find counts directory: " . $self->config_hash->{'config'}{'counts_directory'} . "\n") 
+		unless ( defined($self->config_hash->{'config'}{'counts_directory'}) && -e $self->config_hash->{'config'}{'counts_directory'} );
 
 	$self->targets();
 	$self->target_is_valid();
@@ -32,8 +34,8 @@ sub _read_targets {
 																							sep			=> "\t",
 																							format 	=>	'aoh'
 																 						});
-	my $target_arrayref = $targets_obj->all;
 
+	my $target_arrayref = $targets_obj->all;
 	for (my $i=0; $i < scalar(@$target_arrayref); $i++) {
 		%{$target_arrayref->[$i]} = ( map { lc($_) => $target_arrayref->[$i]{$_} } keys %{ $target_arrayref->[$i] } );
 	}
@@ -51,16 +53,23 @@ sub _validate_targets {
 								$self->_count_files_exist
 							);
 
-	print Dumper($is_valid);
-
 	return $is_valid;
 }
 
 sub _count_files_exist {
 	my ($self) = @_;
 
-	return 0;
+	my $count_directory = $self->config_hash->{'config'}{'counts_directory'};
+	my @count_files = grep defined, map {$_->{'filename'}} @{$self->targets};
 
+	my $count_files_found = 0;
+	foreach my $count_file (@count_files) {
+		$count_file = $count_directory . "/" . $count_file;
+		Bio::Deago::Exceptions::FileNotFound->throw( error => "Error: Cannot find count file: " . $count_file  . "\n")
+		unless(-e $count_file);
+	}
+
+	return 1;
 }
 
 sub _expected_columns_present{

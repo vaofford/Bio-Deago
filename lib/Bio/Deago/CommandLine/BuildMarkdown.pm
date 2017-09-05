@@ -89,7 +89,7 @@ sub usage_text {
 	return <<USAGE;
 Usage: build_markdown [options] *.Rmd
 Takes in R markdown template files and builds a master markdown file using parameters in config file.  
-T emplates will be added in the order they are given.
+Templates will be added in the order they are given.
 
 Options: -c STR        DEAGO config file [deago.config]
          -o STR        output filename [deago_markdown.Rmd]

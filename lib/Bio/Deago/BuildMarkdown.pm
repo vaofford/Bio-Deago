@@ -53,9 +53,9 @@ sub _read_config {
 sub _read_targets {
 	my ($self) = @_;
 
-	my $targets_obj = Bio::Deago::Targets->new( targets_file => $self->config_hash->{'config'}{'targets_file'} );
+	my $targets_obj = Bio::Deago::Targets->new( config_hash => $self->config_hash );
 
-	print Dumper ($targets_obj);
+	#print Dumper ($targets_obj);
 }
 
 sub _markdown_file_exists {

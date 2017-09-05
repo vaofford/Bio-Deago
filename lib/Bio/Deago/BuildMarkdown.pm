@@ -55,7 +55,8 @@ sub _read_targets {
 
 	my $targets_obj = Bio::Deago::Targets->new( config_hash => $self->config_hash );
 
-	#print Dumper ($targets_obj);
+	Bio::Deago::Exceptions::TargetsNotValid->throw( error => "Error: Target file is not valid: " . $self->config_file . "\n" )
+  	unless ( $targets_obj->target_is_valid ); 
 }
 
 sub _markdown_file_exists {

@@ -23,8 +23,6 @@ sub BUILD {
 		unless ( defined($self->config_hash->{'config'}{'counts_directory'}) && -e $self->config_hash->{'config'}{'counts_directory'} );
 
 	$self->targets();
-	$self->target_is_valid();
-
 }
 
 sub _read_targets {

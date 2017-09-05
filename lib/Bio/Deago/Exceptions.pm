@@ -11,7 +11,7 @@ use Exception::Class (
     'Bio::Deago::Exceptions::DirectoryNotFound'		=> { description => 'Couldn\'t find the directory' },
     'Bio::Deago::Exceptions::CouldntWriteToFile'	=> { description => 'Couldn\'t open the file for writing' },
     'Bio::Deago::Exceptions::ConfigNotValid'			=> { description => 'Config is not valid' },
-    'Bio::Deago::Exceptions::TargetNotValid'			=> { description => 'Target file is not valid' },
+    'Bio::Deago::Exceptions::TargetsNotValid'			=> { description => 'Target file is not valid' },
 );  
 
 1;

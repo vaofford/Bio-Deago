@@ -1,0 +1,9 @@
+## Imported data summary
+```\{r targets\}
+targets <- importTargets(parameters$targets_file)
+countdata <- readCountData(targets, parameters$counts_directory, parameters$gene_ids, data_column={$data_column}}, sep=",")
+```
+
+```\{r printTargets, echo=FALSE\}
+datatable(targets, rownames=FALSE, options = list(pageLength = 15, columnDefs = list(list(className = 'dt-center', targets = 0:ncol(targets)-1))))
+```

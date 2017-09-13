@@ -27,7 +27,7 @@ has 'output_directory'	=> ( is => 'rw', isa => 'Str', 			default => '.' );
 sub BUILD {
 	my ($self) = @_;
 
-	my ( $help, $verbose, $output_file, $output_directory, $counts_directory, $targets_file, $results_directory, $annotation_file, $control, $qvalue, $keep_images, $qc_only, $go_analysis, $cmd_version );
+	my ( $help, $verbose, $output_file, $output_directory, $counts_directory, $targets_file, $results_directory, $annotation_file, $control, $qvalue, $keep_images, $qc_only, $go_analysis, $count_type, $count_column, $skip_lines, $cmd_version );
 
 	GetOptionsFromArray(
 		$self->args,
@@ -43,6 +43,9 @@ sub BUILD {
 		'keep_images'			      => \$keep_images,
 		'qc|qc_only'						=> \$qc_only,
 		'go|go_analysis'				=> \$go_analysis,
+		'count_type=s'					=> \$count_type,
+		'count_column=i'				=> \$count_column,
+		'skip_lines=i'					=> \$skip_lines,					
 		'w|version'             => \$cmd_version,
 		'h|help'                => \$help
 	);
@@ -83,8 +86,16 @@ sub BUILD {
 	$self->keep_images($keep_images) 													if ( defined($keep_images) );
 	$self->qc_only($qc_only) 																	if ( defined($qc_only) );
 	$self->go_analysis($go_analysis) 													if ( defined($go_analysis) );
+
+	$self->_error_message("Error: count_type must be either featurecounts or expression") if ( defined($count_type) && $count_type ne "featurecounts" && $count_type ne "expression");
+	$self->count_type($count_type) 														if ( defined($count_type) );
+
+	$self->count_column($count_column) 												if ( defined($count_column) );
+	$self->skip_lines($skip_lines) 														if ( defined($skip_lines) );
+
 	$self->output_file( $output_file ) 												if ( defined($output_file) );
 	$self->output_directory( $output_directory =~ s/\/$//r ) 	if ( defined($output_directory) );
+
 }
 
 sub run {
@@ -116,20 +127,23 @@ sub usage_text {
 Usage: build_deago_config [options]
 Builds a tab-delimited key/value config file for use with deago
 
-Options: -c STR        directory containing count files
-         -t STR        targets file
-         -r STR        results directory [current working directory]
-         -o STR        output filename [deago.config]
-         -d STR        output directory for config file [.]
-         -a STR        annotation file 
-         -q NUM        qvalue (DESeq2) [0.05]
-         --control     name of control condition (must be present in targets file)
-         --keep_images keep images used in report [0]
-         --qc          QC only [0]
-         --go          GO term enrichment [0]
-         -v            verbose output to STDOUT
-         -w            print version and exit
-         -h            this help message
+Options: -c STR         directory containing count files
+         -t STR         targets file
+         -r STR         results directory [current working directory]
+         -o STR         output filename [deago.config]
+         -d STR         output directory for config file [.]
+         -a STR         annotation file 
+         -q NUM         qvalue (DESeq2) [0.05]
+         --control      name of control condition (must be present in targets file)
+         --keep_images  keep images used in report [0]
+         --qc           QC only [0]
+         --go           GO term enrichment [0]
+         --count_type   type of count file [expression|featurecounts]
+         --count_column number of column containing count values
+         --skip_lines   number of lines to skip in count file
+         -v             verbose output to STDOUT
+         -w             print version and exit
+         -h             this help message
 USAGE
 }
 

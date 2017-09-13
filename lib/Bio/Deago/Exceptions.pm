@@ -12,6 +12,7 @@ use Exception::Class (
     'Bio::Deago::Exceptions::CouldntWriteToFile'	=> { description => 'Couldn\'t open the file for writing' },
     'Bio::Deago::Exceptions::ConfigNotValid'			=> { description => 'Config is not valid' },
     'Bio::Deago::Exceptions::TargetsNotValid'			=> { description => 'Target file is not valid' },
+    'Bio::Deago::Exceptions::CountTypeNotValid'		=> { description => 'Count type is not valid' },
 );  
 
 1;

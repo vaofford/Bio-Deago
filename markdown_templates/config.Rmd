@@ -1,0 +1,10 @@
+## Pipeline configuration 
+```\{r config, message=FALSE\}
+parameters <- importConfig({$config_filename})
+resultsDir <- makeResultDir(parameters$results_directory, parameters$keep_images)
+parameters$results <- resultsDir
+```
+
+```\{r printConfig, echo=FALSE\}
+datatable(t(as.data.frame(parameters)), options = list(dom = 't', pageLength = 15), colnames=c('parameter', 'value'))
+```

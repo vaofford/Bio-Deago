@@ -19,7 +19,6 @@ has 'help'         				=> ( is => 'rw', isa => 'Bool', 		default => 0 );
 
 has '_error_message' 			=> ( is => 'rw', isa => 'Str' );
 has 'verbose' 						=> ( is => 'rw', isa => 'Bool', 		default => 0 );
-has 'template_files' 			=> ( is => 'rw', isa => 'ArrayRef' );
 has 'config_file' 				=> ( is => 'rw', isa => 'Str',			default => 'deago.config');
 has 'output_file' 				=> ( is => 'rw', isa => 'Str', 			default=>'deago_markdown.Rmd');
 has 'output_directory'		=> ( is => 'rw', isa => 'Str', 			default => '.' );
@@ -53,18 +52,12 @@ sub BUILD {
 		die($self->_version());
 	}
 
-	if ( @{ $self->args } == 0 ) {
-		$self->_error_message("Error: You need to provide at least one template file");
-	}
-
 	$self->config_file( $config_file ) 												if ( defined($config_file) );
 	$self->output_file( $output_file ) 												if ( defined($output_file) );
 	$self->output_directory( $output_directory =~ s/\/$//r ) 	if ( defined($output_directory) );
 
 	my $output_filename = $self->output_directory . "/" . $self->output_file;
 	$self->output_filename($output_filename) if ( defined($output_filename) );
-
-	$self->template_files( $self->args );
 }
 
 sub run {
@@ -77,8 +70,7 @@ sub run {
 
 	my $obj = Bio::Deago::BuildMarkdown->new(
             	config_file					=> $self->config_file,
-            	output_filename			=> $self->output_filename,
-            	template_files			=> $self->template_files
+            	output_filename			=> $self->output_filename
    					);
 	$obj->build_markdown() or $self->logger->error( "Error: Could not build markdown file:" . $self->output_filename);
 }
@@ -87,9 +79,8 @@ sub usage_text {
 	my ($self) = @_;
 
 	return <<USAGE;
-Usage: build_markdown [options] *.Rmd
+Usage: build_markdown [options]
 Takes in R markdown template files and builds a master markdown file using parameters in config file.  
-Templates will be added in the order they are given.
 
 Options: -c STR        DEAGO config file [deago.config]
          -o STR        output filename [deago_markdown.Rmd]

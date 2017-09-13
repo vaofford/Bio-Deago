@@ -1,0 +1,4 @@
+# DESeq2 analysis
+```\{r analysis, message=FALSE\}
+dds <- runDESeqAnalysis(targets, countdata, parameters)
+```

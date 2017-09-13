@@ -27,7 +27,11 @@ has 'output_directory'	=> ( is => 'rw', isa => 'Str', 			default => '.' );
 sub BUILD {
 	my ($self) = @_;
 
-	my ( $help, $verbose, $output_file, $output_directory, $counts_directory, $targets_file, $results_directory, $annotation_file, $control, $qvalue, $keep_images, $qc_only, $go_analysis, $count_type, $count_column, $skip_lines, $cmd_version );
+	my ( 	$help, $verbose, $output_file, $output_directory, 
+				$counts_directory, $targets_file, $results_directory, 
+				$annotation_file, $control, $qvalue, $count_type, $count_delim,
+				$count_column, $skip_lines, $gene_ids, $keep_images, 
+				$qc_only, $go_analysis, $go_levels, $cmd_version );
 
 	GetOptionsFromArray(
 		$self->args,
@@ -40,12 +44,15 @@ sub BUILD {
 		'a|annotation_file=s'		=> \$annotation_file,
 		'control=s'							=> \$control,
 		'q|qvalue=f'						=> \$qvalue,
+		'count_type=s'					=> \$count_type,
+		'count_column=i'				=> \$count_column,
+		'skip_lines=i'					=> \$skip_lines,		
+		'gene_ids=s'						=> \$gene_ids,		
 		'keep_images'			      => \$keep_images,
 		'qc|qc_only'						=> \$qc_only,
 		'go|go_analysis'				=> \$go_analysis,
-		'count_type=s'					=> \$count_type,
-		'count_column=i'				=> \$count_column,
-		'skip_lines=i'					=> \$skip_lines,					
+		'go_levels=s'						=> \$go_levels,
+		'count_delim=s'					=> \$count_delim,
 		'w|version'             => \$cmd_version,
 		'h|help'                => \$help
 	);
@@ -87,11 +94,16 @@ sub BUILD {
 	$self->qc_only($qc_only) 																	if ( defined($qc_only) );
 	$self->go_analysis($go_analysis) 													if ( defined($go_analysis) );
 
+	$self->_error_message("Error: go_levels must be either BP, MF or all") if ( defined($go_levels) && $go_levels ne "BP" && $go_levels ne "MF" && $go_levels ne "all");
+	$self->go_levels($go_levels) 															if ( defined($go_levels) );
+
 	$self->_error_message("Error: count_type must be either featurecounts or expression") if ( defined($count_type) && $count_type ne "featurecounts" && $count_type ne "expression");
 	$self->count_type($count_type) 														if ( defined($count_type) );
 
 	$self->count_column($count_column) 												if ( defined($count_column) );
 	$self->skip_lines($skip_lines) 														if ( defined($skip_lines) );
+	$self->gene_ids($gene_ids) 																if ( defined($gene_ids) );
+	$self->count_delim($count_delim) 													if ( defined($count_delim) );
 
 	$self->output_file( $output_file ) 												if ( defined($output_file) );
 	$self->output_directory( $output_directory =~ s/\/$//r ) 	if ( defined($output_directory) );
@@ -141,6 +153,8 @@ Options: -c STR         directory containing count files
          --count_type   type of count file [expression|featurecounts]
          --count_column number of column containing count values
          --skip_lines   number of lines to skip in count file
+         --count_delim  count file delimiter
+         --go_levels    BP only, MF only or all [BP|MF|all]
          -v             verbose output to STDOUT
          -w             print version and exit
          -h             this help message

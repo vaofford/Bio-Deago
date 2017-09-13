@@ -4,6 +4,7 @@ use Moose;
 use Cwd qw(abs_path);
 use File::Basename;
 use Text::Template;
+use File::Slurper qw(write_text);
 
 use Data::Dumper;
 
@@ -13,7 +14,7 @@ has 'contrasts'						=> ( is => 'ro', isa => 'ArrayRef', 				required => 1);
 has 'output_filename'			=> ( is => 'ro', isa => 'Str', 							default => './deago_markdown.Rmd' );
 has 'template_files'			=> ( is => 'rw', isa => 'HashRef', 					lazy => 1, builder => '_get_template_files');
 has 'template_directory'	=> ( is => 'rw', isa => 'Str', 							lazy => 1, builder => '_get_template_directory');
-has 'replacement_values'	=> ( is => 'rw', isa => 'HashRef', 					lazy => 1, builder => '_get_replacement_values');
+has 'final_markdown'			=> ( is => 'ro', isa => 'ArrayRef',					lazy => 1, builder => '_build_markdown');
 
 no Moose;
 
@@ -23,8 +24,8 @@ sub BUILD {
 	$self->template_directory;
 	$self->template_files;
 	$self->_templates_exist;
-	$self->replacement_values;
-	$self->_build_markdown;
+	$self->final_markdown;
+	$self->_write_markdown;
 }
 
 sub _get_template_directory {
@@ -38,9 +39,11 @@ sub _get_template_files {
 	my ($self) = @_;
 
 	my %template_files = (
-		'qc' => ['header.Rmd', 'config.Rmd'],
-#		'contrast' => [''],
-#		'go_analysis' => ['']
+		'qc' => ['header.Rmd', 'config.Rmd', 'import.Rmd', 'deseq.Rmd', 'annotation.Rmd', 'qc_plots.Rmd'],
+		'de_main' => ['contrast_main.Rmd', 'contrast_venn.Rmd'],
+		'de_sections' => ['contrast_section.Rmd'],
+		'go_main' => ['go_main.Rmd'],
+		'go_sections' => ['go_section.Rmd']
 	);
 
 	return \%template_files;
@@ -59,28 +62,57 @@ sub _templates_exist {
 	return 1;
 }
 
-sub _get_replacement_values {
-	my ($self) = @_;
-
-	my $replacement_values = { qc => { 	config_filename => $self->config_file,
-                       								fearsome => 'Larry Ellison' }
-        										};     										
-
-  return $replacement_values;
-}
-
 sub _build_markdown {
 	my ($self) = @_;
 
-	my @replaced_template_text = @{ $self->_replace_template_values( $self->template_files->{'qc'}, 'qc' ) };
-	#print Dumper (@replaced_template_text);
+	my $replacement_values = { qc 			=> { 	config_filename => $self->config_file,
+																						count_column 		=> $self->config_hash->{'config'}{'count_column'},
+																						skip_lines 			=> $self->config_hash->{'config'}{'skip_lines'},
+																						count_delimiter => $self->config_hash->{'config'}{'count_delim'},
+                       										},
+#                       			 de_main 	=> { },
+#                       			 go_main 	=> { }
+        										}; 
+
+	my @replaced_template_text = @{ $self->_replace_template_values( $self->template_files->{'qc'}, $replacement_values->{'qc'} ) };
+
+	if ( $self->config_hash->{'config'}{'qc_only'} == 0 ) {
+		my @replaced_main_contrast_text = @{ $self->_replace_template_values( $self->template_files->{'de_main'}, $replacement_values->{'de_main'} ) };
+		push( @replaced_template_text, @replaced_main_contrast_text );
+
+		foreach my $contrast_name ( @{$self->contrasts} ) {
+			my %replacement_contrast_section_values = ( 'contrast_name' => $contrast_name ); 
+			my @replaced_contrast_section_text = @{ $self->_replace_template_values( $self->template_files->{'de_sections'}, \%replacement_contrast_section_values ) };
+			push( @replaced_template_text, @replaced_contrast_section_text );
+
+			if ( $self->config_hash->{'config'}{'go_analysis'} == 1 ) {
+				my %replacement_go_section_values = ( 'contrast_name' => $contrast_name,'go_level' => $self->config_hash->{'config'}{'go_levels'} );
+				my @replaced_main_go_text = @{ $self->_replace_template_values( $self->template_files->{'go_main'}, \%replacement_go_section_values ) };
+				push( @replaced_template_text, @replaced_main_go_text );
+
+				if ( $self->config_hash->{'config'}{'go_levels'} eq 'all' ) {
+					my %replacement_bp_section_values = ( 'contrast_name' => $contrast_name, 'go_level' => 'BP' );
+					my %replacement_mf_section_values = ( 'contrast_name' => $contrast_name, 'go_level' => 'MF' );
+
+					my @replaced_bp_section_text = @{ $self->_replace_template_values( $self->template_files->{'go_sections'}, \%replacement_bp_section_values ) };
+					my @replaced_mf_section_text = @{ $self->_replace_template_values( $self->template_files->{'go_sections'}, \%replacement_mf_section_values ) };
+					push( @replaced_template_text, @replaced_bp_section_text, @replaced_mf_section_text );
+				} else {
+					my @replaced_go_section_text = @{ $self->_replace_template_values( $self->template_files->{'go_sections'}, \%replacement_go_section_values ) };
+					push( @replaced_template_text, @replaced_go_section_text );
+				} 
+			}
+		}
+	}
+
+	print Dumper(@replaced_template_text);
+	return \@replaced_template_text;
 }
 
 sub _replace_template_values {
 	my ($self) = $_[0];
 	my @template_files = @{$_[1]};
-	my $template_level = $_[2];
-	my $replacement_values = $self->replacement_values->{$template_level};
+	my $replacement_values = $_[2];
 
 	my @template_text;
 	foreach my $template_file ( @template_files ) {
@@ -90,6 +122,14 @@ sub _replace_template_values {
 	}
 
 	return \@template_text;
+}
+
+sub _write_markdown {
+	my ($self) = @_;
+
+	my $text_to_write = join("\n\n", @{$self->final_markdown});
+	write_text($self->output_filename, $text_to_write);
+	
 }
 
 __PACKAGE__->meta->make_immutable;

@@ -88,9 +88,11 @@ sub stderr_should_have {
 sub build_test_config_file {
     my ( $config_file, $config_hash ) = @_;
 
-    my $config = Config::General->new(  -ConfigHash        => $config_hash, 
+    my $config = Config::General->new(  -ConfigHash         => $config_hash, 
                                         -AllowMultiOptions  => 'no',
-                                        -SaveSorted         => 'yes'
+                                        -SaveSorted         => 'yes',
+                                        -StoreDelimiter     => "\t",
+                                        -NoEscape           => 'yes'
                                       );
     $config->save_file($config_file);
 }

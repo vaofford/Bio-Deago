@@ -1,0 +1,5 @@
+```\{r annotation\}
+if ("annotation_file" %in% names(parameters)) \{
+  dds <- annotateDataset(dds, parameters)
+\}
+```

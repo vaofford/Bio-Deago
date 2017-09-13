@@ -59,7 +59,8 @@ sub _get_contrasts {
 
 	my $column_to_check = 'condition';
 	my @conditions = map { $_->{$column_to_check} } @{$targets};
-	my @sorted_conditions = sort { lc($a) cmp lc($b) } uniq(@conditions);
+	$_ = lc for @conditions;
+	my @sorted_conditions = sort { $a cmp $b } uniq(@conditions);
 
 	if ( defined $self->config_hash->{'config'}{'control'} ) {
 		my $control = $self->config_hash->{'config'}{'control'};
@@ -87,10 +88,6 @@ sub _build_markdown_from_templates {
 															contrasts 			=> $self->contrasts,
 															output_filename	=> $self->output_filename
 														);
-
-	#print Dumper(__FILE__);
-
-
 }
 
 sub _markdown_file_exists {

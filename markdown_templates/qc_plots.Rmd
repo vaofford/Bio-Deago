@@ -1,0 +1,36 @@
+# QC plots
+## Reads per sample
+This plot shows the sum of gene read counts for each sample. Bar colours represent experimental condition.
+```\{r countPlot, fig.width=8\}
+plotReadCounts(dds, resultsDir)
+```
+
+## Sample-to-sample distances
+This plot gives an overview of how the samples cluster based on their euclidean distance using the regularized log transformed count data. It is a complementary figure to the PCA plot.
+```\{r plotSampleDistances, results="hide", fig.keep="all", warnings = FALSE\}
+plotSampleDistances(dds, resultsDir)
+```
+
+##PCA plot
+This plot shows the first two principal components which explain the variability in the data using the regularized log count data.
+```\{r pcaPlot, warning=FALSE\}
+pcaPlot(dds,resultsDir)
+```
+
+##Cook's distances
+Cook's distance is a measure of how mucha single sample is influencing the fitted coefficients for a gene, and a large value of Cook's distance is intended to indicate an outlier count. This plot can be used to see if one sample has much higher Cook's distances than the other samples.
+```\{r plotCooks, results="hide", fig.keep="all", warning=FALSE, comment=FALSE\}
+plotCooks(dds,resultsDir)
+```
+
+##Density plot
+Density plot showing the distribution of normalised read counts per sample.
+```\{r plotDensity, results="hide", fig.keep="all", comment=FALSE, warning = FALSE\}
+plotDensity(dds,resultsDir)
+```
+
+##Dispersion plot
+This dispersion estimate plot shows the gene-wise estimates (black), the fitted values (red), and the final maximum a posteriori estimates used in testing (blue).
+```\{r plotDispersionEstimates, results="hide", fig.keep="all", warning = FALSE\}
+plotDispersionEstimates(dds, resultsDir)
+```

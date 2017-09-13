@@ -21,10 +21,13 @@ my $script_name = 'Bio::Deago::CommandLine::BuildDeagoConfig';
 my $cwd         = getcwd();
 system('touch empty_file');
 
-my %default_config = 	(	'count_column' => 5,
+my %default_config = 	(	'count_column' 			=> 5,
+												'count_delim'				=> ",",
 												'counts_directory'	=> 't/data/example_counts',
 												'count_type'				=> 'unknown',
+												'gene_ids'					=> 'GeneID',
 												'go_analysis'				=> 0,
+												'go_levels'					=> 'all',
 												'keep_images'				=> 0,
 												'qc_only'						=> 0,
 												'qvalue'						=> 0.05,
@@ -36,10 +39,13 @@ my %default_config = 	(	'count_column' => 5,
 
 build_test_config_file( 'expected_default_deago.config', \%default_config );
 
-my %non_default_config = 	(	'count_column' => 7,
+my %non_default_config = 	(	'count_column' 			=> 7,
+														'count_delim'				=> '\t',
 														'counts_directory'	=> 't/data/example_counts',
 														'count_type'				=> 'featurecounts',
+														'gene_ids'					=> 'geneid',
 														'go_analysis'				=> 1,
+														'go_levels'					=> 'all',
 														'keep_images'				=> 1,
 														'qc_only'						=> 1,
 														'qvalue'						=> 0.01,
@@ -53,7 +59,7 @@ build_test_config_file( 'expected_non_default_deago.config', \%non_default_confi
 
 my %scripts_and_expected_files = (
       '-t t/data/example_targets.tsv -c t/data/example_counts' => ['deago.config', 'expected_default_deago.config' ],
-      '-t t/data/example_targets.tsv -c t/data/example_counts -r t/data -a t/data/example_deago_annotation.tsv -q 0.01 --go --qc --keep_images --count_type featurecounts' => ['deago.config', 'expected_non_default_deago.config' ],
+      '-t t/data/example_targets.tsv -c t/data/example_counts -r t/data -a t/data/example_deago_annotation.tsv -q 0.01 --go --qc --keep_images --count_type featurecounts --gene_ids geneid' => ['deago.config', 'expected_non_default_deago.config' ],
       '-h' => [ 'empty_file', 't/data/empty_file' ],
 );
 

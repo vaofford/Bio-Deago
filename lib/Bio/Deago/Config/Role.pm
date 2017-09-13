@@ -20,6 +20,9 @@ has 'go_analysis' 			=> ( is => 'rw', isa => 'Bool', 						default => 0);
 has 'count_type'				=> ( is => 'rw', isa => 'Str');
 has 'count_column'			=> ( is => 'rw', isa => 'Num');
 has 'skip_lines'				=> ( is => 'rw', isa => 'Num');
+has 'gene_ids'					=> ( is => 'rw', isa => 'Str');
+has 'count_delim'				=> ( is => 'rw', isa => 'Str');
+has 'go_levels'					=> ( is => 'rw', isa => 'Str');
 has 'config_file'				=> ( is => 'rw', isa => 'Str', 							default => './default.config');
 has 'config_hash'				=> ( is => 'rw', isa => 'Config::General');
 has 'config_is_valid' 	=> ( is => 'ro', isa => 'Bool', 						lazy=>1, 		builder => 'validate_config' );
@@ -31,6 +34,10 @@ sub build_config_hash {
 	$self->count_type($count_info->{'count_type'});
 	$self->count_column($count_info->{'count_column'});
 	$self->skip_lines($count_info->{'skip_lines'});
+	$self->gene_ids($count_info->{'gene_ids'});
+	$self->count_delim($count_info->{'count_delim'});
+
+	$self->go_levels('all') unless ( defined $self->go_levels );
 
 	my %config_hash = ( 'counts_directory' 	=> $self->counts_directory,
 											'targets_file' 			=> $self->targets_file,
@@ -41,7 +48,10 @@ sub build_config_hash {
 											'go_analysis'				=> $self->go_analysis,
 											'count_type'				=> $self->count_type,
 											'count_column'			=> $self->count_column,
-											'skip_lines'				=> $self->skip_lines
+											'skip_lines'				=> $self->skip_lines,
+											'gene_ids'					=> $self->gene_ids,
+											'count_delim'				=> $self->count_delim,
+											'go_levels'					=> $self->go_levels
 										);
 
 	$config_hash{'annotation_file'} = $self->annotation_file if ( defined($self->annotation_file) );
@@ -49,7 +59,9 @@ sub build_config_hash {
 
 	my $config_obj = Config::General->new(	-ConfigHash 				=> \%config_hash, 
 																					-AllowMultiOptions 	=> 'no',
-																					-SaveSorted 				=> 'yes'
+																					-SaveSorted 				=> 'yes',
+																					-StoreDelimiter			=> "\t",
+																					-NoEscape						=> 'yes'
 																				);
 	return($config_obj);
 }
@@ -57,15 +69,21 @@ sub build_config_hash {
 sub _get_count_file_info {
 	my ($self) = @_;
 
-	my $default_count_params = { 	expression 		=> { 	count_column => 5,
-                       															skip_lines   => 0 },
-																featurecounts => { 	count_column => 7,
-                       															skip_lines   => 1 },							
+	my $default_count_params = { 	expression 		=> { 	count_column 	=> 5,
+                       															skip_lines   	=> 0,
+                       															gene_ids			=> 'GeneID',
+                       															count_delim		=> "," },
+																featurecounts => { 	count_column 	=> 7,
+                       															skip_lines   	=> 1,
+                       															gene_ids			=> 'Geneid',
+                       															count_delim		=> '\t' }						
         											};     		
 
-  my %count_info = (	'count_type' => $self->count_type,
-  										'count_column' => $self->count_column,
-  										'skip_lines' => $self->skip_lines
+  my %count_info = (	'count_type' 		=> $self->count_type,
+  										'count_column' 	=> $self->count_column,
+  										'skip_lines' 		=> $self->skip_lines,
+  										'gene_ids' 			=> $self->gene_ids,
+  										'count_delim' 	=> $self->count_delim
   									);
        											
   if ( defined($self->count_type) ) {
@@ -75,10 +93,14 @@ sub _get_count_file_info {
 		$count_info{'count_type'} = $self->count_type;
 		$count_info{'count_column'} = $default_count_params->{$self->count_type}{'count_column'} unless ( defined $self->count_column);
 		$count_info{'skip_lines'} = $default_count_params->{$self->count_type}{'skip_lines'} unless ( defined $self->skip_lines);
+		$count_info{'gene_ids'} = $default_count_params->{$self->count_type}{'gene_ids'} unless ( defined $self->gene_ids);
+		$count_info{'count_delim'} = $default_count_params->{$self->count_type}{'count_delim'} unless ( defined $self->count_delim);
 	} else {
 		$count_info{'count_type'} = 'unknown';
   	$count_info{'count_column'} = $default_count_params->{'expression'}{'count_column'} unless ( defined $self->count_column);
 		$count_info{'skip_lines'} = $default_count_params->{'expression'}{'skip_lines'} unless ( defined $self->skip_lines);
+		$count_info{'gene_ids'} = $default_count_params->{'expression'}{'gene_ids'} unless ( defined $self->gene_ids);
+		$count_info{'count_delim'} = $default_count_params->{'expression'}{'count_delim'} unless ( defined $self->count_delim);
   }
 
   return \%count_info;
@@ -124,7 +146,8 @@ sub _count_info_is_valid {
 	my ($self) = @_;
 	( ($self->config_hash->{'config'}{'count_type'} eq ('unknown') ||  $self->config_hash->{'config'}{'count_type'} eq ('expression') || $self->config_hash->{'config'}{'count_type'} eq ('featurecounts')) &&
 		defined $self->config_hash->{'config'}{'count_column'} &&
-		defined $self->config_hash->{'config'}{'skip_lines'}
+		defined $self->config_hash->{'config'}{'skip_lines'} && 
+		defined $self->config_hash->{'config'}{'gene_ids'}
 		) ? return 1 : return 0;
 }
 

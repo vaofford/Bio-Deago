@@ -1,0 +1,5 @@
+### GO term enrichment
+```\{r {$contrast_name}.GOanalysis, echo=TRUE, warning=FALSE, comment=FALSE\}
+go_tables <- suppressMessages(runGOanalysis(dds, contrasts, parameters))
+writeGOtables(go_tables, resultsDir)
+```

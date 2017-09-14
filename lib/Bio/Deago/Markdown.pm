@@ -105,7 +105,6 @@ sub _build_markdown {
 		}
 	}
 
-	print Dumper(@replaced_template_text);
 	return \@replaced_template_text;
 }
 

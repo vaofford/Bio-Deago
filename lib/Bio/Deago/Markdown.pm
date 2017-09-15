@@ -11,6 +11,7 @@ use Data::Dumper;
 has 'config_file' 				=> ( is => 'ro', isa => 'Str', 							required => 1);
 has 'config_hash' 				=> ( is => 'rw', isa => 'Config::General', 	required => 1);
 has 'contrasts'						=> ( is => 'ro', isa => 'ArrayRef', 				required => 1);
+has 'num_samples'					=> ( is => 'rw', isa => 'Num', 							default => 0);
 has 'output_filename'			=> ( is => 'ro', isa => 'Str', 							default => './deago_markdown.Rmd' );
 has 'template_files'			=> ( is => 'rw', isa => 'HashRef', 					lazy => 1, builder => '_get_template_files');
 has 'template_directory'	=> ( is => 'rw', isa => 'Str', 							lazy => 1, builder => '_get_template_directory');
@@ -73,6 +74,8 @@ sub _build_markdown {
 #                       			 de_main 	=> { },
 #                       			 go_main 	=> { }
         										}; 
+  $self->num_samples(40);
+  $replacement_values->{'qc'} = {%{$replacement_values->{'qc'}}, %{$self->_qc_plot_values}};
 
 	my @replaced_template_text = @{ $self->_replace_template_values( $self->template_files->{'qc'}, $replacement_values->{'qc'} ) };
 
@@ -106,6 +109,48 @@ sub _build_markdown {
 	}
 
 	return \@replaced_template_text;
+}
+
+sub _qc_plot_values {
+	my ($self) = @_;
+
+	my $qc_values = {	0	 => {	'rc_fig_width' 		=> 9, 'rc_fig_height' 	=> 7,
+                  					'sd_fig_width' 		=> 9, 'sd_fig_height' 	=> 7,
+	                          'pca_fig_width' 	=> 9, 'pca_fig_height' 	=> 7,
+	                          'cd_fig_width' 		=> 9, 'cd_fig_height' 	=> 7,
+	                          'dens_fig_width' 	=> 9, 'dens_fig_height' => 7,
+	                          'disp_fig_width' 	=> 9, 'disp_fig_height' => 7
+					                },
+										10 => {	'pca_fig_width' 	=> 10, 'pca_fig_height' 	=> 9
+													},
+                    20 => {	'pca_fig_width' 	=> 11, 'pca_fig_height' 	=>11,
+                          	'dens_fig_width' 	=> 11, 'dens_fig_height' 	=> 11
+                        	},
+                    30 => {	'sd_fig_width' 		=> 12, 'sd_fig_height' 		=> 11,
+                          	'pca_fig_width' 	=> 12, 'pca_fig_height' 	=> 11,
+                          	'dens_fig_width' 	=> 11, 'dens_fig_height' 	=> 12
+                        	},
+                    40 => {	'rc_fig_width' 		=> 10, 'rc_fig_height' 		=> 7,
+                          	'sd_fig_width' 		=> 12, 'sd_fig_height' 		=> 11,
+                          	'pca_fig_width' 	=> 14, 'pca_fig_height' 	=> 12,
+                          	'cd_fig_width' 		=> 10, 'cd_fig_height' 		=> 7,
+                          	'dens_fig_width' 	=> 11, 'dens_fig_height' 	=> 12,
+                          	'disp_fig_width' 	=> 10, 'disp_fig_height' 	=> 7
+                        	}
+									};
+
+	if ( $self->num_samples >= 10 && $self->num_samples < 20 ) {
+		return { %{$qc_values->{0}}, %{$qc_values->{10}} };
+	} elsif ( $self->num_samples >= 20 && $self->num_samples < 30 ) {
+		return { %{$qc_values->{0}}, %{$qc_values->{20}} };
+	} elsif ( $self->num_samples >= 30 && $self->num_samples < 40 ) {
+		return { %{$qc_values->{0}}, %{$qc_values->{30}} };
+	} elsif ( $self->num_samples >= 40 ) {
+		return { %{$qc_values->{0}}, %{$qc_values->{40}} };
+	} else {
+		return $qc_values->{0};
+	}
+
 }
 
 sub _replace_template_values {

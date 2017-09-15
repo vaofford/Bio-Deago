@@ -18,6 +18,7 @@ has 'config_file' 		=> ( is => 'ro', isa => 'Str', required => 1);
 has 'output_filename'	=> ( is => 'ro', isa => 'Str', 							default => './deago_markdown.Rmd' );
 has 'template_files' 	=> ( is => 'rw', isa => 'ArrayRef');
 has 'config_hash' 		=> ( is => 'rw', isa => 'Config::General', 	lazy => 1, 	builder => 'read_config_file');
+has 'targets'					=> ( is => 'ro', isa => 'ArrayRef', 				lazy => 1, 	builder => '_read_targets' );
 has 'contrasts'				=> ( is => 'ro', isa => 'ArrayRef', 				lazy => 1, 	builder => '_get_contrasts' );
 has 'build_markdown'	=> ( is => 'ro', isa => 'Bool', 						lazy => 1, 	builder => '_build_markdown' );
 
@@ -26,6 +27,7 @@ sub _build_markdown {
 
 	$self->_output_directory_exists;
 	$self->config_hash;
+	$self->targets;
 	$self->contrasts;
 	$self->_build_markdown_from_templates();
 
@@ -55,10 +57,10 @@ sub _read_targets {
 sub _get_contrasts {
 	my ($self) = @_;
 
-	my $targets = $self->_read_targets;
+	#my $targets = $self->_read_targets;
 
 	my $column_to_check = 'condition';
-	my @conditions = map { $_->{$column_to_check} } @{$targets};
+	my @conditions = map { $_->{$column_to_check} } @{$self->targets};
 	$_ = lc for @conditions;
 	my @sorted_conditions = sort { $a cmp $b } uniq(@conditions);
 
@@ -85,6 +87,7 @@ sub _build_markdown_from_templates {
 
 	Bio::Deago::Markdown->new( 	config_file 		=> $self->config_file,
 															config_hash 		=> $self->config_hash,
+															num_samples			=> scalar( @{$self->targets} ),
 															contrasts 			=> $self->contrasts,
 															output_filename	=> $self->output_filename
 														);

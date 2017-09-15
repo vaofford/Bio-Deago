@@ -5,7 +5,8 @@ output:
   html_document:
     toc: yes
     toc_float: yes
-    toc_depth: 3
+    toc_depth: 3  
+    number_sections: true
     theme: paper
 ---
 

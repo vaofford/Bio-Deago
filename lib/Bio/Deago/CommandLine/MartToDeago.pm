@@ -96,8 +96,8 @@ Usage: mart_to_deago [options]
 Converts a tab-delimited annotation file (e.g. from BioMart) for use with deago
 
 Options: -a STR        annotation file
-         -o STR        output filename [deago_annotation.tsv]
-         -d STR        output directory for annnotation file [.]
+         -o STR        output filename for deago annotation file [deago_annotation.tsv]
+         -d STR        output directory for deago annnotation file [.]
          -s STR        input file field separator [\t]
          -v            verbose output to STDOUT
          -w            print version and exit

@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-package Bio::Deago::Main::BuildMarkdown;
+package Bio::Deago::Main::BuildDeagoMarkdown;
 
 # ABSTRACT: Build a master R markdown file from templates
 # PODNAME: build_markdown
@@ -12,6 +12,6 @@ Build a configuration file from command line arguements for use with deago
 BEGIN { unshift( @INC, '../lib' ) }
 BEGIN { unshift( @INC, './lib' ) }
 #BEGIN { unshift( @INC, '/software/pathogen/internal/prod/lib/' ) }
-use Bio::Deago::CommandLine::BuildMarkdown;
+use Bio::Deago::CommandLine::BuildDeagoMarkdown;
 
-Bio::Deago::CommandLine::BuildMarkdown->new(args => \@ARGV, script_name => $0)->run;
+Bio::Deago::CommandLine::BuildDeagoMarkdown->new(args => \@ARGV, script_name => $0)->run;

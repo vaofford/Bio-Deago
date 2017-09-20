@@ -1,15 +1,15 @@
-package Bio::Deago::CommandLine::BuildMarkdown;
+package Bio::Deago::CommandLine::DeagoMarkdownToHtml;
 
-# ABSTRACT: Build a master R Markdown file from templates
+# ABSTRACT: Convert an R Markdown file into HTML report
 
 =head1 SYNOPSIS
-Build a master R Markdown file from templates
+Convert an R Markdown file into HTML report
 =cut
 
 use Moose;
 use Getopt::Long qw(GetOptionsFromArray);
 
-use Bio::Deago::BuildMarkdown;
+use Bio::Deago::DeagoMarkdownToHtml;
 
 extends 'Bio::Deago::CommandLine::Common';
 
@@ -19,22 +19,22 @@ has 'help'         				=> ( is => 'rw', isa => 'Bool', 		default => 0 );
 
 has '_error_message' 			=> ( is => 'rw', isa => 'Str' );
 has 'verbose' 						=> ( is => 'rw', isa => 'Bool', 		default => 0 );
-has 'config_file' 				=> ( is => 'rw', isa => 'Str',			default => 'deago.config');
-has 'output_file' 				=> ( is => 'rw', isa => 'Str', 			default=>'deago_markdown.Rmd');
+has 'markdown_file' 			=> ( is => 'rw', isa => 'Str',			default => 'deago_markdown.Rmd');
 has 'output_directory'		=> ( is => 'rw', isa => 'Str', 			default => '.' );
-has 'output_filename'			=> ( is => 'rw', isa => 'Str', 			default => './deago_markdown.Rmd');
+has 'output_file' 				=> ( is => 'rw', isa => 'Str',				default => 'deago_markdown.html');
+has 'output_filename'			=> ( is => 'rw', isa => 'Str', 			default => './deago_markdown.html');
 
 sub BUILD {
 	my ($self) = @_;
 
-	my ( $help, $verbose, $cmd_version, $config_file, $template_files, $output_directory, $output_file);
+	my ( $help, $verbose, $cmd_version, $markdown_file, $output_directory, $output_file);
 
 	GetOptionsFromArray(
 		$self->args,
 		'v|verbose'           		=> \$verbose,
 		'o|output_file=s'     		=> \$output_file,
 		'd|output_directory=s'		=> \$output_directory,
-		'c|config_file=s'					=> \$config_file,
+		'i|markdown_file=s'				=> \$markdown_file,
 		'w|version'             	=> \$cmd_version,
 		'h|help'                	=> \$help
 	);
@@ -52,7 +52,16 @@ sub BUILD {
 		die($self->_version());
 	}
 
-	$self->config_file( $config_file ) 												if ( defined($config_file) );
+	if ( @{ $self->args } > 0 ) {
+		$self->_error_message("Error: You need to remove trailing arguements");
+	}
+
+	if( !defined($markdown_file) ) {
+		$self->_error_message("Error: You need to provide a markdown file");
+	} else {
+		$self->markdown_file(  ) 
+	}
+
 	$self->output_file( $output_file ) 												if ( defined($output_file) );
 	$self->output_directory( $output_directory =~ s/\/$//r ) 	if ( defined($output_directory) );
 
@@ -68,23 +77,24 @@ sub run {
 		die $self->usage_text;
 	}
 
-	my $obj = Bio::Deago::BuildMarkdown->new(
-            	config_file					=> $self->config_file,
-            	output_filename			=> $self->output_filename
+	my $obj = Bio::Deago::DeagoMarkdownToHtml->new(
+            	markdown_file		=> $self->markdown_file,
+            	html_file				=> $self->output_filename
    					);
-	$obj->build_markdown() or $self->logger->error( "Error: Could not build markdown file:" . $self->output_filename);
+	$obj->run();
+	#or $self->logger->error( "Error: Could not build html file:" . $self->output_filename);
 }
 
 sub usage_text {
 	my ($self) = @_;
 
 	return <<USAGE;
-Usage: build_markdown [options]
-Takes in R markdown template files and builds a master markdown file using parameters in config file.  
+Usage: deago_markdown_to_html [options]
+Takes in a R markdown file and builds a HTML report.  
 
-Options: -c STR        DEAGO config file [deago.config]
-         -o STR        output filename [deago_markdown.Rmd]
-         -d STR        output directory for annnotation file [.]
+Options: -i STR        DEAGO markdown file [deago_markdown.Rmd]
+         -o STR        output filename for html file [deago_markdown.html]
+         -d STR        output directory for html file [.]
          -v            verbose output to STDOUT
          -w            print version and exit
          -h            this help message

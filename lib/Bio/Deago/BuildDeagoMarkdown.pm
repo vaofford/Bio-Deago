@@ -1,4 +1,4 @@
-package Bio::Deago::BuildMarkdown;
+package Bio::Deago::BuildDeagoMarkdown;
 
 use Moose;
 use File::Basename;

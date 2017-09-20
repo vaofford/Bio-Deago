@@ -46,13 +46,13 @@ sub BUILD {
 		'q|qvalue=f'						=> \$qvalue,
 		'count_type=s'					=> \$count_type,
 		'count_column=i'				=> \$count_column,
+		'count_delim=s'					=> \$count_delim,
 		'skip_lines=i'					=> \$skip_lines,		
 		'gene_ids=s'						=> \$gene_ids,		
 		'keep_images'			      => \$keep_images,
 		'qc|qc_only'						=> \$qc_only,
 		'go|go_analysis'				=> \$go_analysis,
 		'go_levels=s'						=> \$go_levels,
-		'count_delim=s'					=> \$count_delim,
 		'w|version'             => \$cmd_version,
 		'h|help'                => \$help
 	);
@@ -139,17 +139,17 @@ sub usage_text {
 Usage: build_deago_config [options]
 Builds a tab-delimited key/value config file for use with deago
 
-Options: -c STR         directory containing count files
-         -t STR         targets file
+Options: -c STR         directory containing count files (absolute path)
+         -t STR         targets filename (absolute path)
          -r STR         results directory [current working directory]
-         -o STR         output filename [deago.config]
+         -o STR         output filename for config file [deago.config]
          -d STR         output directory for config file [.]
-         -a STR         annotation file 
+         -a STR         annotation filename (absolute path)
          -q NUM         qvalue (DESeq2) [0.05]
          --control      name of control condition (must be present in targets file)
-         --keep_images  keep images used in report [0]
-         --qc           QC only [0]
-         --go           GO term enrichment [0]
+         --keep_images  keep images used in report
+         --qc           QC only
+         --go           GO term enrichment
          --count_type   type of count file [expression|featurecounts]
          --count_column number of column containing count values
          --skip_lines   number of lines to skip in count file

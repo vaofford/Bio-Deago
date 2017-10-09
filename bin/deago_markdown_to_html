@@ -2,12 +2,12 @@
 
 package Bio::Deago::Main::DeagoMarkdownToHtml;
 
-# ABSTRACT: Convert an R Markdown file into HTML report
+# ABSTRACT: Convert a R Markdown file into HTML report
 # PODNAME: markdown
 
 =head1 SYNOPSIS
 
-Convert a tab-delimited annotation file (e.g. from BioMart) for use with deago.
+Convert the R Markdown file from deago into HTML report
 =cut
 
 BEGIN { unshift( @INC, '../lib' ) }

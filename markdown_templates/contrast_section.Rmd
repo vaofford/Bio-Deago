@@ -1,19 +1,19 @@
 ## {$contrast_name}
 
 #### MA plot
-The MA plot below compares the mean of the normalized counts against the log fold change, showing one point per gene.  Points will be colored red if the adjusted p-value is less than 0.05. Points which fall out of the window are plotted as open triangles pointing either up or down.
+The MA plot below compares the mean of the normalized counts against the log fold change, showing one point per gene.  Points will be colored red if the adjusted p-value is less than {$alpha}. Points which fall out of the window are plotted as open triangles pointing either up or down.
 ```\{r {$contrast_name}.MA, results='asis'\}
 plotContrastMA(contrasts$'{$contrast_name}', resultsDir, geneLabels=TRUE)
 ```
 
 #### Volcano plot
-The volcano plot below compares the mean of the normalized counts against the log fold change, showing one point per gene.  Points will be colored where the p-value is less than 0.05. Green points represent down-regulated genes (log2FoldChange < -2) and orange points represent up-regulated genes (log2FoldChange > 2).
+The volcano plot below compares the mean of the normalized counts against the log fold change, showing one point per gene.  Points will be colored where the adjusted p-value is less than {$alpha}. Green points represent down-regulated genes (lfc < -2) and orange points represent up-regulated genes (lfc > 2).
 ```\{r {$contrast_name}.volcano, results='asis'\}
 plotVolcano(contrasts$'{$contrast_name}', resultsDir, geneLabels=TRUE)
 ```
 
 ### Differential expression
-The table below contains differntially expressed genes (adjusted p-value < 0.01, log2 fold change <= 2 | >= 2)
+The table below contains differntially expressed genes (adjusted p-value < 0.01, log2 fold change <= 2 | >= 2).
 ```\{r {$contrast_name}.DEA, results='asis'\}
 prepareContrastTable(contrasts$'{$contrast_name}')
 ```

@@ -1,6 +1,6 @@
 #Pairwise contrasts
 
-The summary table below contains the total number of differentially expressed genes and the number of up-regulated (lfc > 2) and down-regulated (lfc < -2) genes for each contrast (padj < `r ifelse(is.na( parameters$alpha ),parameters$alpha,0.05)`).
+The summary table below contains the total number of differentially expressed genes and the number of up-regulated (lfc > 2) and down-regulated (lfc < -2) genes for each contrast (adjusted p-value < {$alpha}).
 
 ```\{r contrasts, echo=TRUE\}
 contrasts <- getContrasts(dds, parameters)

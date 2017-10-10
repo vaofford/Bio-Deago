@@ -1,5 +1,5 @@
 ## Venn diagram
-The Venn diagram below represents the number of differentially expressed genes (padj < `r ifelse(is.na( parameters$alpha ),parameters$alpha,0.05)` that are up-regulated (lfc > 2) or down-regulated (lfc < -2) in each contrast. 
+The Venn diagram below represents the number of differentially expressed genes {$alpha} that are up-regulated (lfc > 2) or down-regulated (lfc < -2) in each contrast. 
 ```\{r venn, echo=TRUE, fig.width=7,fig.height=7\}
 venn_counts <- getVennCounts(contrasts)
 plotVenn(venn_counts, resultsDir)

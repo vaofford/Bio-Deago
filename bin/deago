@@ -1,0 +1,20 @@
+
+#!/usr/bin/env perl
+
+package Bio::Deago::Main::Deago;
+
+# ABSTRACT: RNA-Seq differential expression qc and analysis
+# PODNAME: deago
+
+=head1 SYNOPSIS
+
+RNA-Seq differential expression qc and analysis
+
+=cut
+
+BEGIN { unshift( @INC, '../lib' ) }
+BEGIN { unshift( @INC, './lib' ) }
+#BEGIN { unshift( @INC, '/software/pathogen/internal/prod/lib/' ) }
+use Bio::Deago::CommandLine::Deago;
+
+Bio::Deago::CommandLine::Deago->new(args => \@ARGV, script_name => $0)->run;

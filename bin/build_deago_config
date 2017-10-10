@@ -8,6 +8,7 @@ package Bio::Deago::Main::BuildDeagoConfig;
 =head1 SYNOPSIS
 
 Build a configuration file of key/value pairs for use with deago
+
 =cut
 
 BEGIN { unshift( @INC, '../lib' ) }

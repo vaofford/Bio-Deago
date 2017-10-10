@@ -93,12 +93,12 @@ sub usage_text {
 
 	return <<USAGE;
 Usage: mart_to_deago [options]
-Converts a tab-delimited annotation file (e.g. from BioMart) for use with deago
+Converts a tab-delimited annotation file (e.g. from BioMart) for use with DEAGO
 
 Options: -a STR        annotation file
          -o STR        output filename for deago annotation file [deago_annotation.tsv]
          -d STR        output directory for deago annnotation file [.]
-         -s STR        input file field separator [\t]
+         -s STR        input file field separator [\\t]
          -v            verbose output to STDOUT
          -w            print version and exit
          -h            this help message
@@ -116,7 +116,7 @@ semi-colon separated (;).
  2) Select dataset e.g. Ensembl Genes 87
  3) Select Gene ID, Associated Gene Name and GO Term Accession from Attributes
  4) Download as TSV
- 5) Provide TSV annotation file to script using prepare_deago_annotation.pl -a my_annotation.tsv
+ 5) Run mart_to_deago -a <annotation.tsv>
 
 Example input file contents:
 

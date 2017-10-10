@@ -99,6 +99,8 @@ Options: -i STR        DEAGO markdown file [./deago_markdown.Rmd]
          -w            print version and exit
          -h            this help message
 
+Processes an R markdown file to generate a HTML report.
+
 USAGE
 }
 

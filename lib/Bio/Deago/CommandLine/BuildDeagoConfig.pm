@@ -110,10 +110,6 @@ sub BUILD {
 
 	my $output_filename = $self->output_directory . "/" . $self->output_file;
 	$self->config_file($output_filename) if ( defined($output_filename) );
-
-	use Data::Dumper;
-	print Dumper $self;
-
 }
 
 sub run {
@@ -140,27 +136,67 @@ sub usage_text {
 
 	return <<USAGE;
 Usage: build_deago_config [options]
-Builds a tab-delimited key/value config file for use with deago
+Builds a tab-delimited key/value configuration file for use with DEAGO
 
-Options: -c STR         directory containing count files (absolute path)
-         -t STR         targets filename (absolute path)
-         -r STR         results directory [current working directory]
-         -o STR         output filename for config file [deago.config]
-         -d STR         output directory for config file [.]
-         -a STR         annotation filename (absolute path)
-         -q NUM         qvalue (DESeq2) [0.05]
-         --control      name of control condition (must be present in targets file)
-         --keep_images  keep images used in report
-         --qc           QC only
-         --go           GO term enrichment
-         --count_type   type of count file [expression|featurecounts]
-         --count_column number of column containing count values
-         --skip_lines   number of lines to skip in count file
-         --count_delim  count file delimiter
-         --go_levels    BP only, MF only or all [BP|MF|all]
-         -v             verbose output to STDOUT
-         -w             print version and exit
-         -h             this help message
+Main options:
+  -o STR         output filename for config file [deago.config]
+  -d STR         output directory for config file [.]
+  -v             verbose output to STDOUT
+  -w             print version and exit
+  -h             this help message
+
+Configuration options (required): 
+  -c STR         directory containing count files (absolute path)
+  -t STR         targets filename (absolute path)
+  
+Configuration options (optional): 
+  -r STR         results directory [current working directory]
+  -a STR         annotation filename (absolute path)
+  -q NUM         qvalue (DESeq2) [0.05]
+  --control      name of control condition (must be present in targets file)
+  --keep_images  keep images used in report
+  --qc           QC only
+  --go           GO term enrichment
+  --go_levels    BP only, MF only or all [BP|MF|all]
+  --count_type   type of count file [expression|featurecounts]
+  --count_column number of column containing count values
+  --skip_lines   number of lines to skip in count file
+  --count_delim  count file delimiter
+  --gene_ids      name of column containing gene ids
+
+
+The companion DEAGO R package needs a configuration file containing key/value pairs to define the 
+analysis. The configuration file will be written to ./deago.config unless otherwise specified.
+
+The directory containing the count files (-c) and the targets file which maps the samples to their 
+experimental conditions (-t) must be given. The results directory (-r) will be set to the current 
+working directory unless otherwise specified.
+
+Differential expression analysis using the R package DESeq2 will be performed by default. To get a 
+quality control (qc) report only, use --qc. GO term enrichment analysis using the R package topGO
+can be enabled using --go and the levels specified with --go_levels (defaults to all). GO term 
+enrichment analysis will require an annotation file (-a). Annotation files can be generated using 
+BioMart. For more information run: mart_to_deago -h. An annotation file can also be used to 
+specify alternate gene names.
+
+By default, DESeq2 will take the first condition alphabetically as the control. The control 
+condition can be specified using --control and must be present amongst the conditions listed in 
+the targets file. The targets file must contain at least the followin three columns: filename, 
+replicate and condition.  More information can be found in the vignette for the DEAGO R package.
+
+The images used in the HTML file are not kept by default.  To keep a copy of the plots to use 
+downstream you can use --keep-images.
+
+This package was built as an extension to the WTSI Pathogen Informatics RNA-Seq pipeline which 
+generates read counts in two formats: expression (bespoke) and featurecounts (output from 
+featureCounts PMID:24227677). In the pipeline, featureCounts output is only given where an 
+annotation GTF file is available (typically human/mouse only).  Therefore, the expression 
+format is assumed unless otherwise specified (--count_type). To use a different format, don't 
+specify count_type and specify only count_column, skip_lines, gene_ids and count_delim. The
+default settings for each count type are:
+  expression: (count_column=5, skip_lines=0, gene_ids='GeneID', count_delim=',')
+  featurecounts: (count_column=7, skip_lines=1, gene_ids='Geneid', count_delim='\\t')
+
 USAGE
 }
 

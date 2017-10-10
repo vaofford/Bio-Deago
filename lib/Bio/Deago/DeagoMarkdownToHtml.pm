@@ -3,8 +3,8 @@ package Bio::Deago::DeagoMarkdownToHtml;
 use Moose;
 use File::Basename;
 
-has 'markdown_file'		=> ( is => 'ro', isa => 'Str', 							default => "./deago_markdown.Rmd");
-has 'html_file'				=> ( is => 'ro', isa => 'Str', 							default => "./deago_markdown.html");
+has 'markdown_file'		=> ( is => 'ro', isa => 'Str', default => "./deago_markdown.Rmd");
+has 'html_file'				=> ( is => 'ro', isa => 'Str', default => "./deago_markdown.html");
 
 sub _markdown_file_exists {
 	my ($self) = @_;

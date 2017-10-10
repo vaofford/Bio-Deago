@@ -12,6 +12,7 @@ has 'config_file' 				=> ( is => 'ro', isa => 'Str', 							required => 1);
 has 'config_hash' 				=> ( is => 'rw', isa => 'Config::General', 	required => 1);
 has 'contrasts'						=> ( is => 'ro', isa => 'ArrayRef', 				required => 1);
 has 'num_samples'					=> ( is => 'rw', isa => 'Num', 							default => 0);
+has 'replacement_values'	=> ( is => 'ro', isa => 'HashRef',					lazy => 1, builder => '_define_replacement_values');
 has 'output_filename'			=> ( is => 'ro', isa => 'Str', 							default => './deago_markdown.Rmd' );
 has 'template_files'			=> ( is => 'rw', isa => 'HashRef', 					lazy => 1, builder => '_get_template_files');
 has 'template_directory'	=> ( is => 'rw', isa => 'Str', 							lazy => 1, builder => '_get_template_directory');
@@ -59,59 +60,91 @@ sub _templates_exist {
     		unless ( -e $template_file && -f $template_file );
     }
 	}
-
 	return 1;
 }
 
 sub _build_markdown {
 	my ($self) = @_;
 
-	my $replacement_values = { qc 			=> { 	config_filename => $self->config_file,
-																						count_column 		=> $self->config_hash->{'config'}{'count_column'},
-																						skip_lines 			=> $self->config_hash->{'config'}{'skip_lines'},
-																						count_delimiter => $self->config_hash->{'config'}{'count_delim'},
-                       										},
-#                       			 de_main 	=> { },
-#                       			 go_main 	=> { }
-        										}; 
-  $self->num_samples(40);
-  $replacement_values->{'qc'} = {%{$replacement_values->{'qc'}}, %{$self->_qc_plot_values}};
+	$self->replacement_values;
 
-	my @replaced_template_text = @{ $self->_replace_template_values( $self->template_files->{'qc'}, $replacement_values->{'qc'} ) };
+	my @replaced_text;
+
+	my @replaced_qc_text = @{ $self->_replace_template_values( $self->template_files->{'qc'}, $self->replacement_values->{'qc'} ) };
+	push( @replaced_text, @replaced_qc_text );
 
 	if ( $self->config_hash->{'config'}{'qc_only'} == 0 ) {
-		my @replaced_main_contrast_text = @{ $self->_replace_template_values( $self->template_files->{'de_main'}, $replacement_values->{'de_main'} ) };
-		push( @replaced_template_text, @replaced_main_contrast_text );
+		my @replaced_de_main_text = @{ $self->_replace_template_values( $self->template_files->{'de_main'}, $self->replacement_values->{'de_main'} ) };
+		push( @replaced_text, @replaced_de_main_text );
+		my @replaced_de_section_text = @{ $self->_get_contrast_text() };
+		push( @replaced_text, @replaced_de_section_text );
+	}
 
-		foreach my $contrast_name ( @{$self->contrasts} ) {
-			my %replacement_contrast_section_values = ( 'contrast_name' => $contrast_name ); 
-			my @replaced_contrast_section_text = @{ $self->_replace_template_values( $self->template_files->{'de_sections'}, \%replacement_contrast_section_values ) };
-			push( @replaced_template_text, @replaced_contrast_section_text );
+		return \@replaced_text;
+}
 
-			if ( $self->config_hash->{'config'}{'go_analysis'} == 1 ) {
-				my %replacement_go_section_values = ( 'contrast_name' => $contrast_name,'go_level' => $self->config_hash->{'config'}{'go_levels'} );
-				my @replaced_main_go_text = @{ $self->_replace_template_values( $self->template_files->{'go_main'}, \%replacement_go_section_values ) };
-				push( @replaced_template_text, @replaced_main_go_text );
+sub _get_contrast_text {
+	my ($self) = @_;
 
-				if ( $self->config_hash->{'config'}{'go_levels'} eq 'all' ) {
-					my %replacement_bp_section_values = ( 'contrast_name' => $contrast_name, 'go_level' => 'BP' );
-					my %replacement_mf_section_values = ( 'contrast_name' => $contrast_name, 'go_level' => 'MF' );
+	my @temporary_contrast_text;
+	foreach my $contrast_name ( @{$self->contrasts} ) {
+		my %contrast_values = ( 'contrast_name' => $contrast_name ); 
+		my @replaced_contrast_text = @{ $self->_replace_template_values( $self->template_files->{'de_sections'}, \%contrast_values ) };
+		push( @temporary_contrast_text, @replaced_contrast_text );
 
-					my @replaced_bp_section_text = @{ $self->_replace_template_values( $self->template_files->{'go_sections'}, \%replacement_bp_section_values ) };
-					my @replaced_mf_section_text = @{ $self->_replace_template_values( $self->template_files->{'go_sections'}, \%replacement_mf_section_values ) };
-					push( @replaced_template_text, @replaced_bp_section_text, @replaced_mf_section_text );
-				} else {
-					my @replaced_go_section_text = @{ $self->_replace_template_values( $self->template_files->{'go_sections'}, \%replacement_go_section_values ) };
-					push( @replaced_template_text, @replaced_go_section_text );
-				} 
-			}
+		if ( $self->config_hash->{'config'}{'go_analysis'} == 1 ) {
+			my @replaced_go_text = @{ $self->_get_go_text($contrast_name) };
+			push( @temporary_contrast_text, @replaced_go_text );
 		}
 	}
 
-	return \@replaced_template_text;
+	return \@temporary_contrast_text;
 }
 
-sub _qc_plot_values {
+sub _get_go_text {
+	my ($self) = $_[0];
+	my $contrast_name = $_[1];
+
+	my %replacement_go_values = ( 'contrast_name' => $contrast_name,
+																'go_level' => $self->config_hash->{'config'}{'go_levels'} 
+															 );
+
+	my @temporary_go_text;
+	my @replaced_main_go_text = @{ $self->_replace_template_values( $self->template_files->{'go_main'}, \%replacement_go_values ) };
+	push( @temporary_go_text, @replaced_main_go_text );
+
+	if ( $self->config_hash->{'config'}{'go_levels'} eq 'all' ) {
+		my %replacement_bp_values = ( 'contrast_name' => $contrast_name, 'go_level' => 'BP' );
+		my @replaced_bp_text = @{ $self->_replace_template_values( $self->template_files->{'go_sections'}, \%replacement_bp_values ) };
+		my %replacement_mf_values = ( 'contrast_name' => $contrast_name, 'go_level' => 'MF' );
+		my @replaced_mf_text = @{ $self->_replace_template_values( $self->template_files->{'go_sections'}, \%replacement_mf_values ) };
+		push( @temporary_go_text, @replaced_bp_text, @replaced_mf_text );
+	} else {
+		my @replaced_go_section_text = @{ $self->_replace_template_values( $self->template_files->{'go_sections'}, \%replacement_go_values ) };
+		push( @temporary_go_text, @replaced_go_section_text );
+	}
+
+	return \@temporary_go_text;
+}
+
+sub _define_replacement_values {
+	my ($self) = @_;
+
+	my $replacement_values = { qc 			=> { 	config_filename   => $self->config_file,
+																						results_directory => $self->config_hash->{'config'}{'results_directory'},
+																						count_column 		  => $self->config_hash->{'config'}{'count_column'},
+																						skip_lines 			  => $self->config_hash->{'config'}{'skip_lines'},
+																						count_delimiter   => $self->config_hash->{'config'}{'count_delim'},
+                       										},
+                       			 de_main 	=> { alpha => $self->config_hash->{'config'}{'qvalue'} },
+                       		 	 go_main 	=> { alpha => $self->config_hash->{'config'}{'qvalue'} }
+        										}; 
+
+  $replacement_values->{'qc'} = {%{$replacement_values->{'qc'}}, %{$self->_define_qc_plot_values}};
+	return $replacement_values;
+}
+
+sub _define_qc_plot_values {
 	my ($self) = @_;
 
 	my $qc_values = {	0	 => {	'rc_fig_width' 		=> 9, 'rc_fig_height' 	=> 7,
@@ -150,7 +183,6 @@ sub _qc_plot_values {
 	} else {
 		return $qc_values->{0};
 	}
-
 }
 
 sub _replace_template_values {

@@ -30,34 +30,34 @@ sub _build_markdown {
 	$self->targets;
 	$self->contrasts;
 	$self->_build_markdown_from_templates();
-
-	#print Dumper($self);
 	
 	return $self->_markdown_file_exists();
 }
 
 sub _output_directory_exists {
 	my ($self) = @_;
-
 	Bio::Deago::Exceptions::DirectoryNotFound->throw( error => "Error: Could not find output directory for markdown file: " . $self->output_filename . "\n" )
     unless ( defined($self->output_filename) && -d dirname($self->output_filename) ); 
+  return 1;
+}
+
+sub _markdown_file_exists {
+	my ($self) = @_;
+	Bio::Deago::Exceptions::FileNotFound->throw( error => "Error: Could not find markdown file: " . $self->output_filename . "\n" )
+    unless ( defined($self->output_filename) && -e $self->output_filename );	
+  return 1;
 }
 
 sub _read_targets {
 	my ($self) = @_;
-
 	my $targets_obj = Bio::Deago::Targets->new( config_hash => $self->config_hash );
-
 	Bio::Deago::Exceptions::TargetsNotValid->throw( error => "Error: Target file is not valid: " . $self->config_file . "\n" )
   	unless ( $targets_obj->target_is_valid ); 
-
   return $targets_obj->targets;
 }
 
 sub _get_contrasts {
 	my ($self) = @_;
-
-	#my $targets = $self->_read_targets;
 
 	my $column_to_check = 'condition';
 	my @conditions = map { $_->{$column_to_check} } @{$self->targets};
@@ -84,18 +84,13 @@ sub _get_contrasts {
 
 sub _build_markdown_from_templates {
 	my ($self) = @_;
-
 	Bio::Deago::Markdown->new( 	config_file 		=> $self->config_file,
 															config_hash 		=> $self->config_hash,
 															num_samples			=> scalar( @{$self->targets} ),
 															contrasts 			=> $self->contrasts,
 															output_filename	=> $self->output_filename
 														);
-}
-
-sub _markdown_file_exists {
-	my ($self) = @_;
-	( defined($self->output_filename) && -e $self->output_filename ) ? return 1 : return 0;
+	return 1;
 }
 
 no Moose;

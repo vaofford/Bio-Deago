@@ -108,6 +108,12 @@ sub BUILD {
 	$self->output_file( $output_file ) 												if ( defined($output_file) );
 	$self->output_directory( $output_directory =~ s/\/$//r ) 	if ( defined($output_directory) );
 
+	my $output_filename = $self->output_directory . "/" . $self->output_file;
+	$self->config_file($output_filename) if ( defined($output_filename) );
+
+	use Data::Dumper;
+	print Dumper $self;
+
 }
 
 sub run {
@@ -117,9 +123,6 @@ sub run {
 		print $self->_error_message . "\n";
 		die $self->usage_text;
 	}
-
-	my $config_file = $self->output_directory . "/" . $self->output_file;
-	$self->config_file($config_file) if ( defined($config_file) );
 
 	my $config_hash = $self->build_config_hash();
 	$self->config_hash($config_hash) if ( defined($config_hash) );

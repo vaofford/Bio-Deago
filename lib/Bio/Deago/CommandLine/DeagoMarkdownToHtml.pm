@@ -19,7 +19,7 @@ has 'help'         				=> ( is => 'rw', isa => 'Bool', 		default => 0 );
 
 has '_error_message' 			=> ( is => 'rw', isa => 'Str' );
 has 'verbose' 						=> ( is => 'rw', isa => 'Bool', 		default => 0 );
-has 'markdown_file' 			=> ( is => 'rw', isa => 'Str',			default => 'deago_markdown.Rmd');
+has 'markdown_file' 			=> ( is => 'rw', isa => 'Str',			default => './deago_markdown.Rmd');
 has 'output_directory'		=> ( is => 'rw', isa => 'Str', 			default => '.' );
 has 'output_file' 				=> ( is => 'rw', isa => 'Str',				default => 'deago_markdown.html');
 has 'output_filename'			=> ( is => 'rw', isa => 'Str', 			default => './deago_markdown.html');
@@ -92,7 +92,7 @@ sub usage_text {
 Usage: deago_markdown_to_html [options]
 Takes in a R markdown file and builds a HTML report.  
 
-Options: -i STR        DEAGO markdown file [deago_markdown.Rmd]
+Options: -i STR        DEAGO markdown file [./deago_markdown.Rmd]
          -o STR        output filename for html file [deago_markdown.html]
          -d STR        output directory for html file [.]
          -v            verbose output to STDOUT

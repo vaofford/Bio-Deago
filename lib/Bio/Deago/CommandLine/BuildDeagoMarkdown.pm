@@ -19,7 +19,7 @@ has 'help'         				=> ( is => 'rw', isa => 'Bool', 		default => 0 );
 
 has '_error_message' 			=> ( is => 'rw', isa => 'Str' );
 has 'verbose' 						=> ( is => 'rw', isa => 'Bool', 		default => 0 );
-has 'config_file' 				=> ( is => 'rw', isa => 'Str',			default => 'deago.config');
+has 'config_file' 				=> ( is => 'rw', isa => 'Str',			default => './deago.config');
 has 'output_file' 				=> ( is => 'rw', isa => 'Str', 			default=>'deago_markdown.Rmd');
 has 'output_directory'		=> ( is => 'rw', isa => 'Str', 			default => '.' );
 has 'output_filename'			=> ( is => 'rw', isa => 'Str', 			default => './deago_markdown.Rmd');
@@ -59,7 +59,7 @@ sub BUILD {
 	if( !defined($config_file) ) {
 		$self->_error_message("Error: You need to provide a config file");
 	} else {
-		$self->config_file(  ) 
+		$self->config_file( $config_file );
 	}
 
 	$self->output_file( $output_file ) 												if ( defined($output_file) );
@@ -91,7 +91,7 @@ sub usage_text {
 Usage: build_markdown [options]
 Takes in R markdown template files and builds a master markdown file using parameters in config file.  
 
-Options: -c STR        deago config file [deago.config]
+Options: -c STR        deago config file [./deago.config]
          -o STR        output filename for markdown file [deago_markdown.Rmd]
          -d STR        output directory for markdown file [.]
          -v            verbose output to STDOUT

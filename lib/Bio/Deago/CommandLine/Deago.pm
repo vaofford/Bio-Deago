@@ -123,7 +123,7 @@ sub BUILD {
 	$self->_error_message("Error: Cannot generate html file as html file already exists: " . $self->html_file) if( defined($self->html_file) && -e $self->html_file );
 
 	$self->_error_message("Error: Configuration file does not exist: " . $self->config_file) if( !$self->build_config && defined($self->config_file) && !-e $self->config_file );
-	$self->_error_message("Error: You need to provide both a counts directory and targets file or a valid config file") if( (!defined($self->counts_directory) && !defined($self->targets_file)) && !$self->build_config || !defined($self->config_file) ); 
+	$self->_error_message("Error: You need to provide both a counts directory and targets file or a valid config file") if( ((!defined($self->counts_directory) && !defined($self->targets_file)) && $self->build_config) || !defined($self->config_file) ); 
 
 	$self->_error_message("Error: Cannot build configuration file as destination directory doesn't exist: " . $self->config_file ) if( $self->build_config && defined($self->config_file) && !-d dirname($self->config_file) );
 	$self->_error_message("Error: Cannot build configuration file as config file already exists: " . $self->config_file) if( $self->build_config && defined($self->config_file) && -e $self->config_file );

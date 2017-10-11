@@ -19,7 +19,7 @@ with 'Bio::Deago::Config::Role';
 
 has 'convert_annotation'    => ( is => 'rw', isa => 'Bool',     default => 0 );
 has 'annotation_delimiter'  => ( is => 'rw', isa => 'Str',      default => '\t' );
-has 'annotation_outfile'    => ( is => 'rw', isa => 'Str',      lazy => 1, builder => '_build_annotation_outfile' );
+has 'annotation_outfile'    => ( is => 'rw', isa => 'Str' );
 has 'build_config'          => ( is => 'rw', isa => 'Bool',     default => 0 );
 has 'config_hash'           => ( is => 'rw', isa => 'Config::General');
 has 'config_file'           => ( is => 'rw', isa => 'Str',      default => './deago.config' );
@@ -32,9 +32,10 @@ has 'logger'                => ( is => 'ro', lazy => 1, builder => '_build_logge
 sub run {
   my ($self) = @_;
 
+  $self->annotation_outfile( $self->_build_annotation_outfile ) if ( $self->convert_annotation );
   $self->_convert_mart_to_deago if ( $self->convert_annotation );
   Bio::Deago::Exceptions::FileNotFound->throw( error => "Error: Could not find converted annotation file: " . $self->annotation_outfile . "\n" )
-    unless ( $self->convert_annotation && defined($self->annotation_outfile) && -e $self->annotation_outfile );
+    if ( $self->convert_annotation && defined($self->annotation_outfile) && !-e $self->annotation_outfile );
 
   $self->_build_deago_config if ( $self->build_config );
   Bio::Deago::Exceptions::FileNotFound->throw( error => "Error: Could not find configuration file: " . $self->config_file . "\n" )
@@ -101,6 +102,18 @@ sub _convert_mart_to_deago {
 sub _build_deago_markdown {
   my ($self) = @_;
 
+  Bio::Deago::Exceptions::FileNotFound->throw( error => "Error: Configuration file does not exist: " . $self->config_file . "\n" )
+    unless ( defined($self->config_file) && -e $self->config_file );
+
+  Bio::Deago::Exceptions::DirectoryNotFound->throw( error => "Error: Markdown output directory does not exist: " . dirname($self->markdown_file) . "\n" )
+    unless ( defined($self->markdown_file) && -d dirname($self->markdown_file) );
+
+  my $deago_markdown_cmd_args = join(" ", "-c", $self->config_file, "-o", basename($self->markdown_file), "-d", dirname($self->markdown_file) );
+  my $deago_markdown_cmd = "build_deago_markdown " . $deago_markdown_cmd_args;
+
+  $self->logger->info("Building markdown...");
+  $self->_run_command($deago_markdown_cmd);
+  return 1;
 }
 
 sub _deago_markdown_to_html {

@@ -88,7 +88,7 @@ sub _get_count_file_info {
        											
   if ( defined($self->count_type) ) {
   	Bio::Deago::Exceptions::CountTypeNotValid->throw( error => "Error: Count type is not valid (expression or featurecounts): " . $self->count_type . "\n") 
-			unless ( $self->count_type eq 'expression' || $self->count_type eq 'featurecounts' );
+			unless ( $self->count_type eq 'expression' || $self->count_type eq 'featurecounts' || $self->count_type eq 'unknown');
 
 		$count_info{'count_type'} = $self->count_type;
 		$count_info{'count_column'} = $default_count_params->{$self->count_type}{'count_column'} unless ( defined $self->count_column);

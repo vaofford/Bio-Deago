@@ -1,4 +1,12 @@
 package TestHelper;
+
+# ABSTRACT: Test helper
+# Functionality has been borrowed from Roary (Andrew Page)
+
+=head1 SYNOPSIS
+Test helper
+=cut
+
 use Moose::Role;
 use Test::Most;
 use Data::Dumper;

@@ -1,5 +1,7 @@
 package Bio::Deago::CommandLine::Common;
+
 # ABSTRACT: Common command line settings
+# Functionality has been borrowed from Roary (Andrew Page)
 
 =head1 SYNOPSIS
 Common command line settings

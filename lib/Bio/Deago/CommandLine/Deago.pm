@@ -11,6 +11,7 @@ RNA-Seq differential expression qc and analysis
 
 use Moose;
 use Getopt::Long qw(GetOptionsFromArray);
+use File::Basename;
 use Data::Dumper;
 
 use Bio::Deago;
@@ -27,7 +28,6 @@ has 'verbose' 								=> ( is => 'rw', isa => 'Bool', 		default => 0 );
 
 has 'convert_annotation'			=> ( is => 'rw', isa => 'Bool', 		default => 0 );
 has 'annotation_delimiter'		=> ( is => 'rw', isa => 'Str', 			default => '\t' );
-has 'annotation_outfile'			=> ( is => 'rw', isa => 'Str', 			default => './deago_annotation.tsv' );
 has 'build_config' 						=> ( is => 'rw', isa => 'Bool', 		default => 0 );
 has 'config_hash'     				=> ( is => 'rw', isa => 'Config::General');
 has 'config_file' 						=> ( is => 'rw', isa => 'Str', 			default => './deago.config' );
@@ -40,10 +40,9 @@ sub BUILD {
 	my ( 	$help,					$verbose,						$convert_annotation,	$build_config,
 				$markdown_file,	$html_file,					$counts_directory, 		$annotation_delimiter,
 				$targets_file, 	$results_directory, $annotation_file, 		$control, 
-				$qvalue, 				$count_type, 				$annotation_outfile, 	$count_column, 
+				$qvalue, 				$count_type, 				$count_delim,				 	$count_column, 
 				$skip_lines, 		$gene_ids, 					$keep_images, 				$qc_only, 
 				$go_analysis, 	$go_levels, 				$cmd_version, 				$config_file,
-				$count_delim
 			);
 
 	GetOptionsFromArray(
@@ -51,7 +50,6 @@ sub BUILD {
 		'v|verbose'           		=> \$verbose,
 		'convert_annotation'			=> \$convert_annotation,
 		'annotation_delim=s'			=> \$annotation_delimiter,
-		'annotation_outfile=s'		=> \$annotation_outfile,
 		'build_config'						=> \$build_config,
 		'config_file=s'						=> \$config_file,
 		'markdown_file=s'					=> \$markdown_file,
@@ -95,7 +93,6 @@ sub BUILD {
 
 	$self->convert_annotation($convert_annotation)						if ( defined($convert_annotation) );
 	$self->annotation_delimiter($annotation_delimiter)				if ( defined($annotation_delimiter) );
-	$self->annotation_outfile($annotation_outfile)						if ( defined($annotation_outfile) );
 	$self->build_config($build_config)												if ( defined($build_config) );
 	$self->config_file($config_file)													if ( defined($config_file) );
 	$self->markdown_file($markdown_file)											if ( defined($markdown_file) );
@@ -114,7 +111,7 @@ sub BUILD {
 	$self->_error_message("Error: go_levels must be either BP, MF or all") if ( defined($go_levels) && $go_levels ne "BP" && $go_levels ne "MF" && $go_levels ne "all");
 	$self->go_levels($go_levels) 															if ( defined($go_levels) );
 
-	$self->_error_message("Error: count_type must be either featurecounts or expression") if ( defined($count_type) && $count_type ne "featurecounts" && $count_type ne "expression");
+	$self->_error_message("Error: count_type must be either featurecounts or expression") if ( defined($count_type) && $count_type ne "featurecounts" && $count_type ne "expression" && $count_type ne "unknown");
 	$self->count_type($count_type) 														if ( defined($count_type) );
 
 	$self->count_column($count_column) 												if ( defined($count_column) );
@@ -124,10 +121,16 @@ sub BUILD {
 
 	$self->_error_message("Error: Cannot generate markdown file as markdown file already exists: " . $self->markdown_file) if( defined($self->markdown_file) && -e $self->markdown_file );
 	$self->_error_message("Error: Cannot generate html file as html file already exists: " . $self->html_file) if( defined($self->html_file) && -e $self->html_file );
-	$self->_error_message("Error: Cannot build config file as config file already exists: " . $self->config_file) if( $self->build_config && defined($self->config_file) && -e $self->config_file );
+
+	$self->_error_message("Error: Configuration file does not exist: " . $self->config_file) if( !$self->build_config && defined($self->config_file) && !-e $self->config_file );
+	$self->_error_message("Error: You need to provide both a counts directory and targets file or a valid config file") if( (!defined($self->counts_directory) && !defined($self->targets_file)) && !$self->build_config || !defined($self->config_file) ); 
+
+	$self->_error_message("Error: Cannot build configuration file as destination directory doesn't exist: " . $self->config_file ) if( $self->build_config && defined($self->config_file) && !-d dirname($self->config_file) );
+	$self->_error_message("Error: Cannot build configuration file as config file already exists: " . $self->config_file) if( $self->build_config && defined($self->config_file) && -e $self->config_file );
+
+	$self->_error_message("Error: --convert_annotation requires --build_config") if( $self->convert_annotation && !$self->build_config );
 	$self->_error_message("Error: Cannot convert annotation file as no annotation file given") if( $self->convert_annotation && !defined($self->annotation_file) );
-	$self->_error_message("Error: Cannot convert annotation file as annotation outfile already exists: " . $self->annotation_outfile) if( $self->convert_annotation && defined($self->annotation_outfile) && -e $self->annotation_outfile );
-	$self->_error_message("Error: You need to provide both a counts directory and targets file or a valid config file") if( (!defined($self->counts_directory) && !defined($self->targets_file)) || !defined($self->config_file) ); 
+	$self->_error_message("Error: Cannot convert annotation file as annotation file does not exist: " . $self->annotation_file) if( $self->convert_annotation && defined($self->annotation_file) && !-e $self->annotation_file );
 }
 
 sub run {
@@ -138,36 +141,28 @@ sub run {
 		die $self->usage_text;
 	}
 
-	if ( $self->convert_annotation ) {
-		$self->logger->info("Converting annotation...");
-
-	}
-
+	my $config_hash;
   if ( $self->build_config ) {
-		$self->logger->info("Generating config hash...");
-		my $config_hash = $self->build_config_hash();
-		$self->config_hash($config_hash) if ( defined($config_hash) );
+		$self->logger->info("Building config hash...");
+		$config_hash = $self->build_config_hash();
 	} else {
-
+		$self->logger->info("Found configuration file: " . $self->config_file);
+		$self->logger->info("Reading config hash...");
+		$config_hash = $self->read_config_file();
 	}
+	$self->config_hash($config_hash) if ( defined($config_hash) );
 
-	#$self->_build_config_file if ( $self->build_config );
-
-	#$self->logger->info("Running DEAGO...");
-	#my $deago_obj = Bio::Deago->new(	markdown_file 				=> $self->markdown_file,
-	#																	html_file 						=> $self->html_file,
-	#																	config_file						=> $self->config_file,
-	#																	verbose 							=> $self->verbose
-	#																);
-
-	#if ( $self->config_is_valid() ) {
-	#	my $deago_config = Bio::Deago::BuildDeagoConfig->new( 'config' => $self->config_hash, 'config_file' => $self->config_file );
-	#	$deago_config->build_config_file() or $self->logger->error("Error: Could not write config file:" . $self->config_file);
-	#} else {
-	#	$self->logger->error("Error: Could not write config file, options are not valid");
-	#}
-
-	#$deago_obj->run();
+	$self->logger->info("Running DEAGO...");
+	my $deago_obj = Bio::Deago->new(	convert_annotation		=> $self->convert_annotation,
+																		annotation_delimiter	=> $self->annotation_delimiter,
+																		build_config 					=> $self->build_config,
+																		config_hash 					=> $self->config_hash,
+																		config_file						=> $self->config_file,
+																		markdown_file 				=> $self->markdown_file,
+																		html_file 						=> $self->html_file,
+																		verbose 							=> $self->verbose
+																	);
+	$deago_obj->run();
 }
 
 sub _version {

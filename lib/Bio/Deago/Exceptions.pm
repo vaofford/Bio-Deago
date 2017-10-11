@@ -13,6 +13,7 @@ use Exception::Class (
     'Bio::Deago::Exceptions::ConfigNotValid'			=> { description => 'Config is not valid' },
     'Bio::Deago::Exceptions::TargetsNotValid'			=> { description => 'Target file is not valid' },
     'Bio::Deago::Exceptions::CountTypeNotValid'		=> { description => 'Count type is not valid' },
+    'Bio::Deago::Exceptions::FileExists'					=> { description => 'Couldn\'t write to file, file already exists' },
 );  
 
 1;

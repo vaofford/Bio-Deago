@@ -39,7 +39,7 @@ sub BUILD {
 		'o|output_file=s'     	=> \$output_file,
 		'd|output_directory=s'	=> \$output_directory,
 		'c|counts_directory=s'	=> \$counts_directory,
-		't|targets=s'						=> \$targets_file,
+		't|targets_file=s'			=> \$targets_file,
 		'r|results_directory=s' => \$results_directory,
 		'a|annotation_file=s'		=> \$annotation_file,
 		'control=s'							=> \$control,
@@ -97,7 +97,7 @@ sub BUILD {
 	$self->_error_message("Error: go_levels must be either BP, MF or all") if ( defined($go_levels) && $go_levels ne "BP" && $go_levels ne "MF" && $go_levels ne "all");
 	$self->go_levels($go_levels) 															if ( defined($go_levels) );
 
-	$self->_error_message("Error: count_type must be either featurecounts or expression") if ( defined($count_type) && $count_type ne "featurecounts" && $count_type ne "expression");
+	$self->_error_message("Error: count_type must be either featurecounts or expression") if ( defined($count_type) && $count_type ne "featurecounts" && $count_type ne "expression" && $count_type ne "unknown");
 	$self->count_type($count_type) 														if ( defined($count_type) );
 
 	$self->count_column($count_column) 												if ( defined($count_column) );

@@ -42,12 +42,12 @@ sub run {
     unless ( defined($self->config_file) && -e $self->config_file );
  
   $self->_build_deago_markdown;
-  #Bio::Deago::Exceptions::FileNotFound->throw( error => "Error: Could not find markdown file: " . $self->markdown_file . "\n" )
-  #  unless ( defined($self->markdown_file) && -e $self->markdown_file );
+  Bio::Deago::Exceptions::FileNotFound->throw( error => "Error: Could not find markdown file: " . $self->markdown_file . "\n" )
+    unless ( defined($self->markdown_file) && -e $self->markdown_file );
  
-  #$self->_deago_markdown_to_html;
-  #Bio::Deago::Exceptions::FileNotFound->throw( error => "Error: Could not find HTML file: " . $self->html_file . "\n" )
-  #  unless ( defined($self->html_file) && -e $self->html_file );
+  $self->_deago_markdown_to_html;
+  Bio::Deago::Exceptions::FileNotFound->throw( error => "Error: Could not find HTML file: " . $self->html_file . "\n" )
+    unless ( defined($self->html_file) && -e $self->html_file );
 }
 
 sub _build_annotation_outfile {
@@ -119,6 +119,21 @@ sub _build_deago_markdown {
 sub _deago_markdown_to_html {
   my ($self) = @_;
 
+  Bio::Deago::Exceptions::FileNotFound->throw( error => "Error: Configuration file does not exist: " . $self->config_file . "\n" )
+    unless ( defined($self->config_file) && -e $self->config_file );
+
+  Bio::Deago::Exceptions::FileNotFound->throw( error => "Error: Markdown file does not exist: " . $self->markdown_file . "\n" )
+    unless ( defined($self->markdown_file) && -e $self->markdown_file );
+
+  Bio::Deago::Exceptions::DirectoryNotFound->throw( error => "Error: HTML output directory does not exist: " . dirname($self->html_file) . "\n" )
+    unless ( defined($self->html_file) && -d dirname($self->html_file) );
+
+  my $deago_html_cmd_args = join(" ", "-i", $self->markdown_file, "-o", basename($self->html_file), "-d", dirname($self->html_file) );
+  my $deago_html_cmd = "deago_markdown_to_html " . $deago_html_cmd_args;
+
+  $self->logger->info("Building HTML report...");
+  $self->_run_command($deago_html_cmd);
+  return 1;
 }
 
 sub _run_command {

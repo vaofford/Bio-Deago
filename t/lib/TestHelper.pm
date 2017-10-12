@@ -12,6 +12,8 @@ use Test::Most;
 use Data::Dumper;
 use Test::Files;
 use Test::Output;
+use Cwd;
+use File::Path qw(make_path);
 use Log::Log4perl qw(:easy);
 
 $ENV{PATH} .= ":./bin";
@@ -50,8 +52,6 @@ sub mock_execute_script_and_check_output {
 
                 unlink($actual_output_file_names[$i]);
             }
-
-            
         }
         close STDOUT;
         close STDERR;
@@ -96,6 +96,17 @@ sub stderr_should_have {
     }
     open STDOUT, '>&OLDOUT' or die "Can't restore stdout: $!";
     close OLDOUT or die "Can't close OLDOUT: $!";
+}
+
+sub make_results_directory {
+    my $cwd = getcwd();
+    my $results_directory = $cwd . "/deago_test_results";
+    eval { make_path($results_directory) };
+    if ( $@ || $results_directory !~ m/deago_test_results/ ) {
+        print "Couldn't create $results_directory: $@";
+    } 
+    die "Could not create or define results_directory" if ( !-d $results_directory || $results_directory !~ m/deago_test_results/ || $results_directory eq "" );
+    return $results_directory;
 }
 
 no Moose;

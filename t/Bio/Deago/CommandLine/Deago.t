@@ -17,24 +17,32 @@ BEGIN {
 }
 
 my $script_name = 'Bio::Deago::CommandLine::Deago';
-my $cwd         = getcwd();
 system('touch empty_file');
 
-build_default_config_file( 'expected_default_deago.config' );
-#my $markdown_cmd = "build_deago_markdown -c expected_default_deago.config";
-#system($markdown_cmd);
+my $results_directory = make_results_directory();
+die "Resuls directory path unsafe" if ( !defined($results_directory) || $results_directory eq "" || $results_directory !~ m/deago_test_results/ );
+
+build_default_config_file( 'expected_default_deago.config', $results_directory );
+build_qc_config_file( 'expected_qc_deago.config', $results_directory );
+build_go_config_file( 'expected_go_deago.config', $results_directory );
+build_keep_images_config_file( 'expected_keep_images_deago.config', $results_directory );
+build_expression_config_file( 'expected_expression_deago.config', $results_directory );
+build_featurecounts_config_file( 'expected_featurecounts_deago.config', $results_directory );
+build_mart_config_file( 'expected_mart_deago.config', $results_directory );
+
+my $build_config_params = "--build_config -t t/data/example_targets.tsv -c t/data/example_counts -r $results_directory";
 
 my %scripts_and_expected_files = (
-      '--config_file expected_default_deago.config'													=> [ ['deago_markdown.html'] ],
-#      '-i expected_default_deago.config -o deago_markdown.out.html'				=> [ 'deago_markdown.out.html' ],
-#      '-i expected_default_deago.config -o deago_markdown.out.html -d t'	=> [ 't/deago_markdown.out.html' ],
-#      '-h' => [ 'empty_file', 't/data/empty_file' ],
+#		'--config_file expected_default_deago.config'																			=> [ ['deago_markdown.Rmd','deago_markdown.html'] ],
+#		'--config_file expected_default_deago.config --markdown_file t/deago_markdown.out.Rmd --html_file t/deago_markdown.out.html' => [ ['t/deago_markdown.out.Rmd','t/deago_markdown.out.html'] ],
+#		"$build_config_params --convert_annotation -a t/data/example_mart_annotation.tsv"	=> [ ['deago.config', 't/data/example_mart_annotation_deago.tsv','deago_markdown.Rmd','deago_markdown.html'], 
+#      																																										 ['expected_mart_deago.config', 't/data/example_deago_annotation.tsv'] ],
+	'-h' => [ ['empty_file'], ['t/data/empty_file'] ],
 );
 
 stdout_should_have( $script_name, '',																		'Error: You need to provide or build a configuration file' );
 stdout_should_have( $script_name, '--config_file badConfig', 						'Error: Configuration file does not exist' );
 stdout_should_have( $script_name, '--build_config', 										'Error: You need to provide both a counts directory and targets file or a valid configuration file' );
-
 
 #	$self->_error_message("Error: You need to remove trailing arguements");
 #	$self->_error_message("Error: go_levels must be either BP, MF or all") if ( defined($go_levels) && $go_levels ne "BP" && $go_levels ne "MF" && $go_levels ne "all");
@@ -52,7 +60,15 @@ stdout_should_have( $script_name, '--build_config', 										'Error: You need t
 mock_execute_script_and_check_output( $script_name, \%scripts_and_expected_files );
 
 unlink( 'expected_default_deago.config' );
-#unlink( 'deago_markdown.Rmd' );
+unlink( 'expected_qc_deago.config' );
+unlink( 'expected_go_deago.config' );
+unlink( 'expected_mart_deago.config' );
+unlink( 'expected_keep_images_deago.config' );
+unlink( 'expected_expression_deago.config' );
+unlink( 'expected_featurecounts_deago.config' );
+unlink( 't/data/example_mart_annotation_deago.tsv' );
 unlink( 'empty_file' );
+
+print ("You will need to manually remove the results directory: " . $results_directory . "\n") if ( defined($results_directory) && -d $results_directory && $results_directory =~ m/deago_test_results/ );
 
 done_testing();

@@ -33,9 +33,11 @@ sub run {
   my ($self) = @_;
 
   $self->annotation_outfile( $self->_build_annotation_outfile ) if ( $self->convert_annotation );
+
   $self->_convert_mart_to_deago if ( $self->convert_annotation );
   Bio::Deago::Exceptions::FileNotFound->throw( error => "Error: Could not find converted annotation file: " . $self->annotation_outfile . "\n" )
     if ( $self->convert_annotation && defined($self->annotation_outfile) && !-e $self->annotation_outfile );
+  $self->config_hash->{'config'}->{'annotation_file'} = $self->annotation_outfile if ( $self->convert_annotation && -e $self->annotation_outfile );
 
   $self->_build_deago_config if ( $self->build_config );
   Bio::Deago::Exceptions::FileNotFound->throw( error => "Error: Could not find configuration file: " . $self->config_file . "\n" )
@@ -46,8 +48,8 @@ sub run {
     unless ( defined($self->markdown_file) && -e $self->markdown_file );
  
   $self->_deago_markdown_to_html;
-  #Bio::Deago::Exceptions::FileNotFound->throw( error => "Error: Could not find HTML file: " . $self->html_file . "\n" )
-  #  unless ( defined($self->html_file) && -e $self->html_file );
+  Bio::Deago::Exceptions::FileNotFound->throw( error => "Error: Could not find HTML file: " . $self->html_file . "\n" )
+    unless ( defined($self->html_file) && -e $self->html_file );
 }
 
 sub _build_annotation_outfile {

@@ -130,7 +130,7 @@ sub BUILD {
 	$self->_error_message("Error: Cannot build configuration file as configuration file already exists: " . $self->config_file) if( $self->build_config && defined($self->config_file) && -e $self->config_file );
 
 	$self->_error_message("Error: --convert_annotation requires --build_config") if( $self->convert_annotation && !$self->build_config );
-	$self->_error_message("Error: Cannot convert annotation file as no annotation file given") if( $self->convert_annotation && !defined($self->annotation_file) );
+	$self->_error_message("Error: Cannot convert annotation file as no annotation file given") if( $self->convert_annotation && !defined($self->annotation_file) && $self->build_config );
 	$self->_error_message("Error: Cannot convert annotation file as annotation file does not exist: " . $self->annotation_file) if( $self->convert_annotation && defined($self->annotation_file) && !-e $self->annotation_file );
 }
 
@@ -186,7 +186,6 @@ RNA-Seq differential expression qc and analysis
 Main options:
   --convert_annotation    convert annotation for use with deago (requires -a)
   --annotation_delim      annotation file delimiter [\\t]
-  --annotation_outfile    output annotation file [./deago_annotation.tsv]
   --build_config          build configuration file from command line arguments (see configuration options)
   --config_file           configuration filename or output filename for configuration file if building [./deago.config]
   --markdown_file         output filename for markdown file [./deago_markdown.Rmd]
@@ -226,8 +225,7 @@ HTML report (--html_file if you don't want the default html filename).
 
 To use custom gene names and for GO term enrichment (--go) and annotation file must be provided 
 (-a). Annotations downloaded from BioMart or those in a similar format can be converted for use 
-with DEAGO.  For more information run: mart_to_deago -h.  The converted annotation will be written 
-to ./deago_annotation.tsv unless otherwise specified (--annnotation_outfile).
+with DEAGO.  For more information run: mart_to_deago -h.
          
 USAGE
 }

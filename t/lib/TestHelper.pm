@@ -14,6 +14,7 @@ use Test::Files;
 use Test::Output;
 use Cwd;
 use File::Path qw(make_path);
+use File::Slurper qw(read_text write_text);
 use Log::Log4perl qw(:easy);
 
 $ENV{PATH} .= ":./bin";
@@ -107,6 +108,13 @@ sub make_results_directory {
     } 
     die "Could not create or define results_directory" if ( !-d $results_directory || $results_directory !~ m/deago_test_results/ || $results_directory eq "" );
     return $results_directory;
+}
+
+sub build_star_delimited_annotation_file {
+    my $tab_delim_annotation = read_text('t/data/example_mart_annotation.tsv');
+    my $star_delim_annotation = $tab_delim_annotation;
+    $star_delim_annotation =~ s/\t/\*\*/g;
+    write_text('star_delimited_annotation.txt', $star_delim_annotation);
 }
 
 no Moose;

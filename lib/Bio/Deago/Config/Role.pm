@@ -2,11 +2,10 @@ package Bio::Deago::Config::Role;
 
 use Moose::Role;
 use namespace::autoclean;
-use Cwd;
+use Cwd qw(abs_path getcwd); 
 use Config::General;
 use Bio::Deago::Exceptions;
-
-use Data::Dumper;
+use Bio::Deago::Targets;
 
 has 'counts_directory'  => ( is => 'rw', isa => 'Str');
 has 'targets_file' 	   	=> ( is => 'rw', isa => 'Str');
@@ -39,9 +38,9 @@ sub build_config_hash {
 
 	$self->go_levels('all') unless ( defined $self->go_levels );
 
-	my %config_hash = ( 'counts_directory' 	=> $self->counts_directory,
-											'targets_file' 			=> $self->targets_file,
-											'results_directory' => $self->results_directory,
+	my %config_hash = ( 'counts_directory' 	=> abs_path($self->counts_directory),
+											'targets_file' 			=> abs_path($self->targets_file),
+											'results_directory' => abs_path($self->results_directory),
 											'qvalue'						=> $self->qvalue,
 											'keep_images'				=> $self->keep_images,
 											'qc_only'						=> $self->qc_only,
@@ -54,7 +53,7 @@ sub build_config_hash {
 											'go_levels'					=> $self->go_levels
 										);
 
-	$config_hash{'annotation_file'} = $self->annotation_file if ( defined($self->annotation_file) );
+	$config_hash{'annotation_file'} = abs_path($self->annotation_file) if ( defined($self->annotation_file) );
 	$config_hash{'control'} = $self->control if ( defined($self->control) );
 
 	my $config_obj = Config::General->new(	-ConfigHash 				=> \%config_hash, 
@@ -153,7 +152,13 @@ sub _count_info_is_valid {
 
 sub _go_analysis_is_valid {
 	my ($self) = @_;
-	( $self->config_hash->{'config'}{'go_analysis'} == 1 && $self->_annotation_file_exists == 1 ) ? return 1 : return 0;
+	( $self->config_hash->{'config'}{'go_analysis'} && $self->_annotation_file_exists ) ? return 1 : return 0;
+}
+
+sub _targets_are_valid {
+	my ($self) = @_;
+	my $targets_obj = Bio::Deago::Targets->new( config_hash => $self->config_hash );
+	( $targets_obj->target_is_valid ) ? return 1 : return 0;
 }
 
 sub _config_is_valid {
@@ -165,13 +170,14 @@ sub _config_is_valid {
 								$self->_targets_file_exists &&
 								$self->_results_directory_exists &&
 								$self->_qvalue_is_valid &&
-								$self->_count_info_is_valid);
+								$self->_count_info_is_valid &&
+								$self->_targets_are_valid);
 
 	if ( defined($self->annotation_file) ) {
 		$is_valid = ($is_valid && $self->_annotation_file_exists);
 	}
 
-	if ( $self->go_analysis == 1 ) {
+	if ( $self->go_analysis ) {
 		$is_valid = ($is_valid && $self->_go_analysis_is_valid);
 	}
 

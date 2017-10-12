@@ -130,7 +130,7 @@ sub _get_go_text {
 sub _define_replacement_values {
 	my ($self) = @_;
 
-	my $replacement_values = { qc 			=> { 	config_filename   => $self->config_file,
+	my $replacement_values = { qc 			=> { 	config_filename   => abs_path($self->config_file),
 																						results_directory => $self->config_hash->{'config'}{'results_directory'},
 																						count_column 		  => $self->config_hash->{'config'}{'count_column'},
 																						skip_lines 			  => $self->config_hash->{'config'}{'skip_lines'},

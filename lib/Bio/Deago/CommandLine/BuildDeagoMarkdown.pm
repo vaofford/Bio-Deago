@@ -61,9 +61,11 @@ sub BUILD {
 	} else {
 		$self->config_file( $config_file );
 	}
+	$self->_error_message("Error: Cannot find config file: " . $self->config_file) if ( !-e $self->config_file && defined($config_file) );
 
-	$self->output_file( $output_file ) 												if ( defined($output_file) );
 	$self->output_directory( $output_directory =~ s/\/$//r ) 	if ( defined($output_directory) );
+	$self->_error_message("Error: Could not find output directory for markdown file: " . $self->output_directory) if ( !-d $self->output_directory && defined($output_directory) );
+	$self->output_file( $output_file ) 												if ( defined($output_file) );
 
 	my $output_filename = $self->output_directory . "/" . $self->output_file;
 	$self->output_filename($output_filename) if ( defined($output_filename) );

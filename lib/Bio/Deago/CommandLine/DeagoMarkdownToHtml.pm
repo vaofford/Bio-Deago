@@ -62,6 +62,7 @@ sub BUILD {
 		$self->markdown_file(  ) 
 	}
 
+	$self->markdown_file( $markdown_file ) 										if ( defined($markdown_file) );
 	$self->output_file( $output_file ) 												if ( defined($output_file) );
 	$self->output_directory( $output_directory =~ s/\/$//r ) 	if ( defined($output_directory) );
 

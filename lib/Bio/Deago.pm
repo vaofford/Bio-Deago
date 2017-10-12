@@ -46,8 +46,8 @@ sub run {
     unless ( defined($self->markdown_file) && -e $self->markdown_file );
  
   $self->_deago_markdown_to_html;
-  Bio::Deago::Exceptions::FileNotFound->throw( error => "Error: Could not find HTML file: " . $self->html_file . "\n" )
-    unless ( defined($self->html_file) && -e $self->html_file );
+  #Bio::Deago::Exceptions::FileNotFound->throw( error => "Error: Could not find HTML file: " . $self->html_file . "\n" )
+  #  unless ( defined($self->html_file) && -e $self->html_file );
 }
 
 sub _build_annotation_outfile {

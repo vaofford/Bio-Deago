@@ -13,7 +13,6 @@ use Data::Dumper;
 use Test::Files;
 use Test::Output;
 use Log::Log4perl qw(:easy);
-use Config::General;
 
 $ENV{PATH} .= ":./bin";
 
@@ -40,11 +39,13 @@ sub mock_execute_script_and_check_output {
             warn $@ if $@;
 
             my $actual_output_file_name   = $scripts_and_expected_files->{$script_parameters}->[0];
-            my $expected_output_file_name = $scripts_and_expected_files->{$script_parameters}->[1];
+            my $expected_output_file_name = $scripts_and_expected_files->{$script_parameters}->[1] if ( defined($scripts_and_expected_files->{$script_parameters}->[1]) );
 
             ok( -e $actual_output_file_name, "Actual output file exists $actual_output_file_name  $script_parameters" );
 
-            compare_ok( $actual_output_file_name, $expected_output_file_name, "Actual and expected output match for '$script_parameters'" );
+            if ( defined($expected_output_file_name) ) {
+                compare_ok( $actual_output_file_name, $expected_output_file_name, "Actual and expected output match for '$script_parameters'" );
+            }
 
             unlink($actual_output_file_name);
         }
@@ -92,19 +93,6 @@ sub stderr_should_have {
     open STDOUT, '>&OLDOUT' or die "Can't restore stdout: $!";
     close OLDOUT or die "Can't close OLDOUT: $!";
 }
-
-sub build_test_config_file {
-    my ( $config_file, $config_hash ) = @_;
-
-    my $config = Config::General->new(  -ConfigHash         => $config_hash, 
-                                        -AllowMultiOptions  => 'no',
-                                        -SaveSorted         => 'yes',
-                                        -StoreDelimiter     => "\t",
-                                        -NoEscape           => 'yes'
-                                      );
-    $config->save_file($config_file);
-}
-
 
 no Moose;
 1;

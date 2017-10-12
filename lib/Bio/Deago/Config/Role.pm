@@ -108,7 +108,7 @@ sub _get_count_file_info {
 sub read_config_file {
 	my ($self) = @_;
 
-	Bio::Deago::Exceptions::FileNotFound->throw( error => "Error: Cannot find config file: " . $self->config_file . "\n") 
+	Bio::Deago::Exceptions::FileNotFound->throw( error => "Error: Cannot find configuration file: " . $self->config_file . "\n") 
 		unless ( -e $self->config_file );
 
 	my $config_obj = Config::General->new($self->config_file);

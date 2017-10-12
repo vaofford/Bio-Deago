@@ -33,9 +33,9 @@ my %scripts_and_expected_files = (
       '-h' => [ 'empty_file', 't/data/empty_file' ],
 );
 
-stdout_should_have( $script_name, '',																							'Error: You need to provide a config file' );
-stdout_should_have( $script_name, '-o deago_markdown.Rmd -d .', 									'Error: You need to provide a config file' );
-stdout_should_have( $script_name, '-c bad_config', 																'Error: Cannot find config file' );
+stdout_should_have( $script_name, '',																							'Error: You need to provide a configuration file' );
+stdout_should_have( $script_name, '-o deago_markdown.Rmd -d .', 									'Error: You need to provide a configuration file' );
+stdout_should_have( $script_name, '-c bad_config', 																'Error: Cannot find configuration file' );
 stdout_should_have( $script_name, '-c expected_default_deago.config  -d badDir', 	'Error: Could not find output directory for markdown file' );
 
 mock_execute_script_and_check_output( $script_name, \%scripts_and_expected_files );

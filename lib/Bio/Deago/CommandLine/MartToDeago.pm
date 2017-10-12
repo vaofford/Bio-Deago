@@ -63,10 +63,12 @@ sub BUILD {
 	} else {
 		$self->annotation_file($annotation_file);
 	}
+	$self->_error_message("Error: Cannot find annotation file: " . $self->annotation_file) if ( !-e $self->annotation_file && defined($annotation_file) );
 
 	$self->separator( $separator ) 														if ( defined($separator) );
 	$self->output_file( $output_file ) 												if ( defined($output_file) );
 	$self->output_directory( $output_directory =~ s/\/$//r ) 	if ( defined($output_directory) );
+	$self->_error_message("Error: Could not find output directory for annotation file: " . $self->output_directory) if ( !-d $self->output_directory && defined($output_directory) );
 
 	my $output_filename = $self->output_directory . "/" . $self->output_file;
 	$self->output_filename($output_filename) if ( defined($output_filename) );

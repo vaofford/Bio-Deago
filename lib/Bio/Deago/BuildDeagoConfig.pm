@@ -10,14 +10,14 @@ has 'build_config_file' => ( is => 'ro', isa => 'Bool', lazy => 1, 	builder => '
 
 sub _config_file_exists {
 	my ($self) = @_;
-	Bio::Deago::Exceptions::FileNotFound->throw( error => "Error: Could not find config file: " . $self->config_file . "\n" )
+	Bio::Deago::Exceptions::FileNotFound->throw( error => "Error: Could not find configuration file: " . $self->config_file . "\n" )
     unless ( defined($self->config_file) && -e $self->config_file  );	
   return 1;
 }
 
 sub _config_directory_exists {
 	my ($self) = @_;
-	Bio::Deago::Exceptions::FileNotFound->throw( error => "Error: Could not find output directory for config file: " . $self->config_file . "\n" )
+	Bio::Deago::Exceptions::FileNotFound->throw( error => "Error: Could not find output directory for configuration file: " . $self->config_file . "\n" )
     unless ( defined($self->config_file) && -d dirname($self->config_file)  );	
   return 1;
 }

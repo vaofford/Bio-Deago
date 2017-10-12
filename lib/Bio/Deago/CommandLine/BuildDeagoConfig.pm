@@ -125,9 +125,9 @@ sub run {
 
 	if ( $self->config_is_valid() ) {
 		my $deago_config = Bio::Deago::BuildDeagoConfig->new( 'config' => $self->config_hash, 'config_file' => $self->config_file );
-		$deago_config->build_config_file() or $self->logger->error("Error: Could not write config file:" . $self->config_file);
+		$deago_config->build_config_file() or $self->logger->error("Error: Could not write configuration file:" . $self->config_file);
 	} else {
-		$self->logger->error("Error: Could not write config file, options are not valid");
+		$self->logger->error("Error: Could not write configuration file, options are not valid");
 	}
 }
 
@@ -139,8 +139,8 @@ Usage: build_deago_config [options]
 Builds a tab-delimited key/value configuration file for use with DEAGO
 
 Main options:
-  -o STR         output filename for config file [deago.config]
-  -d STR         output directory for config file [.]
+  -o STR         output filename for configuration file [deago.config]
+  -d STR         output directory for configuration file [.]
   -v             verbose output to STDOUT
   -w             print version and exit
   -h             this help message

@@ -122,11 +122,12 @@ sub BUILD {
 	$self->_error_message("Error: Cannot generate markdown file as markdown file already exists: " . $self->markdown_file) if( defined($self->markdown_file) && -e $self->markdown_file );
 	$self->_error_message("Error: Cannot generate html file as html file already exists: " . $self->html_file) if( defined($self->html_file) && -e $self->html_file );
 
-	$self->_error_message("Error: Configuration file does not exist: " . $self->config_file) if( !$self->build_config && defined($self->config_file) && !-e $self->config_file );
-	$self->_error_message("Error: You need to provide both a counts directory and targets file or a valid config file") if( ((!defined($self->counts_directory) && !defined($self->targets_file)) && $self->build_config) || !defined($self->config_file) ); 
+	$self->_error_message("Error: You need to provide or build a configuration file") if( !$self->build_config && !defined($config_file) );
+	$self->_error_message("Error: Configuration file does not exist: " . $self->config_file) if( !$self->build_config && defined($config_file) && !-e $self->config_file );
+	$self->_error_message("Error: You need to provide both a counts directory and targets file or a valid configuration file") if( ((!defined($self->counts_directory) && !defined($self->targets_file)) && $self->build_config) || !defined($self->config_file) ); 
 
 	$self->_error_message("Error: Cannot build configuration file as destination directory doesn't exist: " . $self->config_file ) if( $self->build_config && defined($self->config_file) && !-d dirname($self->config_file) );
-	$self->_error_message("Error: Cannot build configuration file as config file already exists: " . $self->config_file) if( $self->build_config && defined($self->config_file) && -e $self->config_file );
+	$self->_error_message("Error: Cannot build configuration file as configuration file already exists: " . $self->config_file) if( $self->build_config && defined($self->config_file) && -e $self->config_file );
 
 	$self->_error_message("Error: --convert_annotation requires --build_config") if( $self->convert_annotation && !$self->build_config );
 	$self->_error_message("Error: Cannot convert annotation file as no annotation file given") if( $self->convert_annotation && !defined($self->annotation_file) );
@@ -186,8 +187,8 @@ Main options:
   --convert_annotation    convert annotation for use with deago (requires -a)
   --annotation_delim      annotation file delimiter [\\t]
   --annotation_outfile    output annotation file [./deago_annotation.tsv]
-  --build_config          build config file from command line arguments (see configuration options)
-  --config_file           config filename or output filename for config file if building [./deago.config]
+  --build_config          build configuration file from command line arguments (see configuration options)
+  --config_file           configuration filename or output filename for configuration file if building [./deago.config]
   --markdown_file         output filename for markdown file [./deago_markdown.Rmd]
   --html_file             output filename for html file [./deago_markdown.html]
   -v                      verbose output to STDOUT

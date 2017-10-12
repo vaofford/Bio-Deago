@@ -57,11 +57,11 @@ sub BUILD {
 	}
 
 	if( !defined($config_file) ) {
-		$self->_error_message("Error: You need to provide a config file");
+		$self->_error_message("Error: You need to provide a configuration file");
 	} else {
 		$self->config_file( $config_file );
 	}
-	$self->_error_message("Error: Cannot find config file: " . $self->config_file) if ( !-e $self->config_file && defined($config_file) );
+	$self->_error_message("Error: Cannot find configuration file: " . $self->config_file) if ( !-e $self->config_file && defined($config_file) );
 
 	$self->output_directory( $output_directory =~ s/\/$//r ) 	if ( defined($output_directory) );
 	$self->_error_message("Error: Could not find output directory for markdown file: " . $self->output_directory) if ( !-d $self->output_directory && defined($output_directory) );
@@ -94,7 +94,7 @@ Usage: build_markdown [options]
 Takes in R markdown template files and builds a master R markdown file using parameters (key/value 
 pairs) from a configuration file.  
 
-Options: -c STR        deago config file [./deago.config]
+Options: -c STR        deago configuration file [./deago.config]
          -o STR        output filename for markdown file [deago_markdown.Rmd]
          -d STR        output directory for markdown file [.]
          -v            verbose output to STDOUT

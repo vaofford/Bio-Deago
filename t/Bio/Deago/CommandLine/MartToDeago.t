@@ -26,26 +26,10 @@ my %scripts_and_expected_files = (
       '-h' => [ 'empty_file', 't/data/empty_file' ],
 );
 
-stdout_should_have($script_name,'', 'Error: You need to provide an annotation file');
-stdout_should_have($script_name,'-a t/data/example_mart_annotation_short.tsv 0', 'Error: You need to remove trailing arguements');
-
-
-throws_ok{
-    Bio::Deago::MartToDeago->new(
-        annotation_file	=> 't/data/example_mart_annotation_short.tsv',
-        output_filename	=> 'non_existant_directory/deago_annotation.tsv')
-} qr /Error: Could not find output directory for annotation file:/, 'non existant output directory should throw an error';
-
-throws_ok{
-    Bio::Deago::MartToDeago->new(
-        annotation_file	=> 'non_existant_annotation.tsv')
-} qr /Error: Cannot find annotation file:/, 'non existant annotation file should throw an error';
-
-throws_ok{
-    Bio::Deago::MartToDeago->new(
-        annotation_file	=> 't/data/example_mart_annotation_short.tsv',
-        separator 			=> ';')
-} qr /Error: Could not collapse annotation, only found one column. Check separator./, 'non existant annotation file should throw an error';
+stdout_should_have( $script_name, '',                                                         'Error: You need to provide an annotation file');
+stdout_should_have( $script_name, '-a t/data/example_mart_annotation_short.tsv 0',            'Error: You need to remove trailing arguements');
+stdout_should_have( $script_name, '-a bad_annotation.tsv',                                    'Error: Cannot find annotation file' );
+stdout_should_have( $script_name, '-a t/data/example_mart_annotation_short.tsv  -d badDir',   'Error: Could not find output directory for annotation file' );
 
 mock_execute_script_and_check_output( $script_name, \%scripts_and_expected_files );
 

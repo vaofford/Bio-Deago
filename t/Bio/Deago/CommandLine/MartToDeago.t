@@ -21,9 +21,9 @@ my $cwd         = getcwd();
 system('touch empty_file');
 
 my %scripts_and_expected_files = (
-      '-a t/data/example_mart_annotation_short.tsv' => ['deago_annotation.tsv', 't/data/example_deago_annotation_short.tsv' ],
-      '-a t/data/example_mart_annotation_short.tsv -o deago.out.tsv' => ['deago.out.tsv', 't/data/example_deago_annotation_short.tsv' ],
-      '-h' => [ 'empty_file', 't/data/empty_file' ],
+      '-a t/data/example_mart_annotation_short.tsv' => [ ['deago_annotation.tsv'], ['t/data/example_deago_annotation_short.tsv'] ],
+      '-a t/data/example_mart_annotation_short.tsv -o deago.out.tsv' => [ ['deago.out.tsv'], ['t/data/example_deago_annotation_short.tsv'] ],
+      '-h' => [ ['empty_file'], ['t/data/empty_file'] ],
 );
 
 stdout_should_have( $script_name, '',                                                         'Error: You need to provide an annotation file');

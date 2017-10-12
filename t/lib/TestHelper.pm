@@ -38,16 +38,20 @@ sub mock_execute_script_and_check_output {
             eval($cmd);
             warn $@ if $@;
 
-            my $actual_output_file_name   = $scripts_and_expected_files->{$script_parameters}->[0];
-            my $expected_output_file_name = $scripts_and_expected_files->{$script_parameters}->[1] if ( defined($scripts_and_expected_files->{$script_parameters}->[1]) );
+            my @actual_output_file_names   = @{ $scripts_and_expected_files->{$script_parameters}->[0] };
+            my @expected_output_file_names = @{ $scripts_and_expected_files->{$script_parameters}->[1] } if ( defined($scripts_and_expected_files->{$script_parameters}->[1]) );
 
-            ok( -e $actual_output_file_name, "Actual output file exists $actual_output_file_name  $script_parameters" );
+            for (my $i=0; $i < scalar(@actual_output_file_names); $i++) {
+                ok( -e $actual_output_file_names[$i], "Actual output file exists $actual_output_file_names[$i]  $script_parameters" );
 
-            if ( defined($expected_output_file_name) ) {
-                compare_ok( $actual_output_file_name, $expected_output_file_name, "Actual and expected output match for '$script_parameters'" );
+                if ( defined($expected_output_file_names[$i]) ) {
+                    compare_ok( $actual_output_file_names[$i], $expected_output_file_names[$i], "Actual and expected output match for '$script_parameters'" );
+                }
+
+                unlink($actual_output_file_names[$i]);
             }
 
-            unlink($actual_output_file_name);
+            
         }
         close STDOUT;
         close STDERR;

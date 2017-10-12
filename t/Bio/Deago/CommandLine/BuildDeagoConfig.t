@@ -29,13 +29,13 @@ build_expression_config_file( 'expected_expression_deago.config' );
 build_featurecounts_config_file( 'expected_featurecounts_deago.config' );
 
 my %scripts_and_expected_files = (
-      '-t t/data/example_targets.tsv -c t/data/example_counts' 																							=> [ 'deago.config', 'expected_default_deago.config' ],
-      '-t t/data/example_targets.tsv -c t/data/example_counts --qc' 																				=> [ 'deago.config', 'expected_qc_deago.config' ],
-      '-t t/data/example_targets.tsv -c t/data/example_counts -a t/data/example_deago_annotation.tsv --go' 	=> [ 'deago.config', 'expected_go_deago.config' ],
-      '-t t/data/example_targets.tsv -c t/data/example_counts --keep_images' 																=> [ 'deago.config', 'expected_keep_images_deago.config' ],
-      '-t t/data/example_targets.tsv -c t/data/example_counts --count_type featurecounts' 									=> [ 'deago.config', 'expected_featurecounts_deago.config' ],
-      '-t t/data/example_targets.tsv -c t/data/example_counts --count_type expression' 											=> [ 'deago.config', 'expected_expression_deago.config' ],
-      '-h' => [ 'empty_file', 't/data/empty_file' ],
+      '-t t/data/example_targets.tsv -c t/data/example_counts' 																							=> [ ['deago.config'], ['expected_default_deago.config'] ],
+      '-t t/data/example_targets.tsv -c t/data/example_counts --qc' 																				=> [ ['deago.config'], ['expected_qc_deago.config'] ],
+      '-t t/data/example_targets.tsv -c t/data/example_counts -a t/data/example_deago_annotation.tsv --go' 	=> [ ['deago.config'], ['expected_go_deago.config'] ],
+      '-t t/data/example_targets.tsv -c t/data/example_counts --keep_images' 																=> [ ['deago.config'], ['expected_keep_images_deago.config'] ],
+      '-t t/data/example_targets.tsv -c t/data/example_counts --count_type featurecounts' 									=> [ ['deago.config'], ['expected_featurecounts_deago.config'] ],
+      '-t t/data/example_targets.tsv -c t/data/example_counts --count_type expression' 											=> [ ['deago.config'], ['expected_expression_deago.config'] ],
+      '-h' => [ ['empty_file'], ['t/data/empty_file'] ],
 );
 
 stdout_should_have( $script_name, '', 																																					'Error: You need to provide' );

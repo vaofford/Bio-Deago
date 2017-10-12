@@ -25,10 +25,10 @@ my $markdown_cmd = "build_deago_markdown -c expected_default_deago.config";
 system($markdown_cmd);
 
 my %scripts_and_expected_files = (
-      '-i expected_default_deago.config'																	=> [ 'deago_markdown.Rmd' ],
-      '-i expected_default_deago.config -o deago_markdown.out.html'				=> [ 'deago_markdown.out.html' ],
-      '-i expected_default_deago.config -o deago_markdown.out.html -d t'	=> [ 't/deago_markdown.out.html' ],
-      '-h' => [ 'empty_file', 't/data/empty_file' ],
+      '-i expected_default_deago.config'																	=> [ ['deago_markdown.Rmd'] ],
+      '-i expected_default_deago.config -o deago_markdown.out.html'				=> [ ['deago_markdown.out.html'] ],
+      '-i expected_default_deago.config -o deago_markdown.out.html -d t'	=> [ ['t/deago_markdown.out.html'] ],
+      '-h' => [ ['empty_file'], ['t/data/empty_file'] ],
 );
 
 stdout_should_have( $script_name, '',																		'Error: You need to provide a markdown file' );

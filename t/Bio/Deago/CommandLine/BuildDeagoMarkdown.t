@@ -25,12 +25,12 @@ build_qc_config_file( 'expected_qc_deago.config' );
 build_go_config_file( 'expected_go_deago.config' );
 
 my %scripts_and_expected_files = (
-      '-c expected_default_deago.config'																	=> [ 'deago_markdown.Rmd' ],
-      '-c expected_qc_deago.config'																				=> [ 'deago_markdown.Rmd' ],
-      '-c expected_go_deago.config'																				=> [ 'deago_markdown.Rmd' ],
-      '-c expected_default_deago.config -o deago_markdown.out.Rmd'				=> [ 'deago_markdown.out.Rmd' ],
-      '-c expected_default_deago.config -o deago_markdown.out.Rmd -d t'		=> [ 't/deago_markdown.out.Rmd' ],
-      '-h' => [ 'empty_file', 't/data/empty_file' ],
+      '-c expected_default_deago.config'																	=> [ ['deago_markdown.Rmd'] ],
+      '-c expected_qc_deago.config'																				=> [ ['deago_markdown.Rmd'] ],
+      '-c expected_go_deago.config'																				=> [ ['deago_markdown.Rmd'] ],
+      '-c expected_default_deago.config -o deago_markdown.out.Rmd'				=> [ ['deago_markdown.out.Rmd'] ],
+      '-c expected_default_deago.config -o deago_markdown.out.Rmd -d t'		=> [ ['t/deago_markdown.out.Rmd'] ],
+      '-h' => [ ['empty_file'], ['t/data/empty_file'] ],
 );
 
 stdout_should_have( $script_name, '',																							'Error: You need to provide a configuration file' );

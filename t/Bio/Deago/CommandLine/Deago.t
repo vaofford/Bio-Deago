@@ -30,6 +30,7 @@ build_star_delimited_annotation_file();
 
 my %scripts_and_expected_files = (
 		'--config_file expected_default_deago.config'																			=> [ ['deago_markdown.Rmd','deago_markdown.html'] ],
+		"$build_config_params --config_file t/new_deago.config"														=> [ ['t/new_deago.config','deago_markdown.Rmd','deago_markdown.html'] ], 
 		"$build_config_params --convert_annotation -a t/data/example_mart_annotation.tsv"	=> [ ['deago.config', 't/data/example_mart_annotation_deago.tsv','deago_markdown.Rmd','deago_markdown.html'], 
       																																										 ['expected_mart_deago.config', 't/data/example_deago_annotation.tsv'] ],		
 		'--config_file expected_default_deago.config --markdown_file t/deago_markdown.out.Rmd --html_file t/deago_markdown.out.html' 	=> [ ['t/deago_markdown.out.Rmd','t/deago_markdown.out.html'] ],

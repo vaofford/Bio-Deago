@@ -78,8 +78,13 @@ sub _build_deago_config {
       $cmd_arg = " --" . $config_parameter . " '" . $self->config_hash->{'config'}->{$config_parameter} . "'";
     }
 
+    $cmd_arg .= " -o " . basename($self->config_file); 
+    $cmd_arg .= " -d " . dirname($self->config_file); 
+
     $config_cmd_args .= $cmd_arg if (defined $cmd_arg);
   }
+
+
 
   my $build_config_cmd = "build_deago_config " . $config_cmd_args;
   $self->logger->info("Building DEAGO config...");

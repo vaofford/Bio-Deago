@@ -29,17 +29,14 @@ my $build_config_params = "--build_config -t t/data/example_targets.tsv -c t/dat
 build_star_delimited_annotation_file();
 
 my %scripts_and_expected_files = (
-#		'--config_file expected_default_deago.config'																			=> [ ['deago_markdown.Rmd','deago_markdown.html'] ],
-#		'--config_file expected_default_deago.config --markdown_file t/deago_markdown.out.Rmd --html_file t/deago_markdown.out.html' => [ ['t/deago_markdown.out.Rmd','t/deago_markdown.out.html'] ],
-#		"$build_config_params --convert_annotation -a t/data/example_mart_annotation.tsv"	=> [ ['deago.config', 't/data/example_mart_annotation_deago.tsv','deago_markdown.Rmd','deago_markdown.html'], 
-#      																																										 ['expected_mart_deago.config', 't/data/example_deago_annotation.tsv'] ],
-		"$build_config_params --convert_annotation -a t/data/example_mart_annotation.tsv --annotation_delim '**'"	=> [ ['deago.config', 't/data/example_mart_annotation_deago.tsv','deago_markdown.Rmd','deago_markdown.html'], 
-      																																																					   ['expected_mart_deago.config', 't/data/example_deago_annotation.tsv'] ],
-	'-h' => [ ['empty_file'], ['t/data/empty_file'] ],
+		'--config_file expected_default_deago.config'																			=> [ ['deago_markdown.Rmd','deago_markdown.html'] ],
+		"$build_config_params --convert_annotation -a t/data/example_mart_annotation.tsv"	=> [ ['deago.config', 't/data/example_mart_annotation_deago.tsv','deago_markdown.Rmd','deago_markdown.html'], 
+      																																										 ['expected_mart_deago.config', 't/data/example_deago_annotation.tsv'] ],		
+		'--config_file expected_default_deago.config --markdown_file t/deago_markdown.out.Rmd --html_file t/deago_markdown.out.html' 	=> [ ['t/deago_markdown.out.Rmd','t/deago_markdown.out.html'] ],
+		"$build_config_params --convert_annotation -a t/data/example_mart_annotation.tsv --annotation_delim '**'"											=> [ ['deago.config', 't/data/example_mart_annotation_deago.tsv','deago_markdown.Rmd','deago_markdown.html'], 
+      																																																					   										 ['expected_mart_deago.config', 't/data/example_deago_annotation.tsv'] ],
+		'-h' => [ ['empty_file'], ['t/data/empty_file'] ],
 );
-
-
-
 
 stdout_should_have( $script_name, '',																									'Error: You need to provide or build a configuration file' );
 stdout_should_have( $script_name, '--config_file badConfig', 													'Error: Configuration file does not exist' );

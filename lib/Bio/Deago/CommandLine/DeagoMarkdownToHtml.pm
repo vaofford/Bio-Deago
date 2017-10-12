@@ -21,7 +21,7 @@ has '_error_message' 			=> ( is => 'rw', isa => 'Str' );
 has 'verbose' 						=> ( is => 'rw', isa => 'Bool', 		default => 0 );
 has 'markdown_file' 			=> ( is => 'rw', isa => 'Str',			default => './deago_markdown.Rmd');
 has 'output_directory'		=> ( is => 'rw', isa => 'Str', 			default => '.' );
-has 'output_file' 				=> ( is => 'rw', isa => 'Str',				default => 'deago_markdown.html');
+has 'output_file' 				=> ( is => 'rw', isa => 'Str',			default => 'deago_markdown.html');
 has 'output_filename'			=> ( is => 'rw', isa => 'Str', 			default => './deago_markdown.html');
 
 sub BUILD {
@@ -59,12 +59,13 @@ sub BUILD {
 	if( !defined($markdown_file) ) {
 		$self->_error_message("Error: You need to provide a markdown file");
 	} else {
-		$self->markdown_file(  ) 
+		$self->markdown_file( $markdown_file );
 	}
+	$self->_error_message("Error: Cannot find markdown file: " . $self->markdown_file) if ( !-e $self->markdown_file && defined($markdown_file) );
 
-	$self->markdown_file( $markdown_file ) 										if ( defined($markdown_file) );
 	$self->output_file( $output_file ) 												if ( defined($output_file) );
 	$self->output_directory( $output_directory =~ s/\/$//r ) 	if ( defined($output_directory) );
+	$self->_error_message("Error: Could not find output directory for html file: " . $self->output_directory) if ( !-d $self->output_directory && defined($output_directory) );
 
 	my $output_filename = $self->output_directory . "/" . $self->output_file;
 	$self->output_filename($output_filename) if ( defined($output_filename) );
@@ -78,12 +79,14 @@ sub run {
 		die $self->usage_text;
 	}
 
-	my $obj = Bio::Deago::DeagoMarkdownToHtml->new(
+#	
+	my $html_obj = Bio::Deago::DeagoMarkdownToHtml->new(
             	markdown_file		=> $self->markdown_file,
-            	html_file				=> $self->output_filename
+            	html_file				=> $self->output_filename,
    					);
-	$obj->run();
-	#or $self->logger->error( "Error: Could not build html file:" . $self->output_filename);
+	
+	$self->logger->info("R logs will be written to:" . $html_obj->rlog);
+	$html_obj->run();
 }
 
 sub usage_text {

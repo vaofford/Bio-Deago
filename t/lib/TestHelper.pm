@@ -99,15 +99,16 @@ sub stderr_should_have {
     close OLDOUT or die "Can't close OLDOUT: $!";
 }
 
-sub make_results_directory {
+sub make_output_directory {
     my $cwd = getcwd();
-    my $results_directory = $cwd . "/deago_test_results";
-    eval { make_path($results_directory) };
-    if ( $@ || $results_directory !~ m/deago_test_results/ ) {
-        print "Couldn't create $results_directory: $@";
+    my $output_directory = $cwd . "/deago_test_output";
+
+    eval { make_path($output_directory) };
+    if ( $@ || $output_directory !~ m/deago_test_output/ ) {
+        print "Couldn't create $output_directory: $@";
     } 
-    die "Could not create or define results_directory" if ( !-d $results_directory || $results_directory !~ m/deago_test_results/ || $results_directory eq "" );
-    return $results_directory;
+    die "Could not create or define output_directory" if ( !-d $output_directory || $output_directory !~ m/deago_test_output/ || $output_directory eq "" );
+    return $output_directory;
 }
 
 sub build_star_delimited_annotation_file {

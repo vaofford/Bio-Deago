@@ -19,12 +19,12 @@ BEGIN {
 my $script_name = 'Bio::Deago::CommandLine::BuildDeagoMarkdown';
 system('touch empty_file');
 
-my $results_directory = make_results_directory();
-die "Resuls directory path unsafe" if ( !defined($results_directory) || $results_directory eq "" || $results_directory !~ m/deago_test_results/ );
+my $output_directory = make_output_directory();
+die "Output directory path unsafe" if ( !defined($output_directory) || $output_directory eq "" || $output_directory !~ m/deago_test_output/ );
 
-build_default_config_file( 'expected_default_deago.config', $results_directory );
-build_qc_config_file( 'expected_qc_deago.config', $results_directory );
-build_go_config_file( 'expected_go_deago.config', $results_directory );
+build_default_config_file( 'expected_default_deago.config', $output_directory );
+build_qc_config_file( 'expected_qc_deago.config', $output_directory );
+build_go_config_file( 'expected_go_deago.config', $output_directory );
 
 my %scripts_and_expected_files = (
       '-c expected_default_deago.config'																	=> [ ['deago_markdown.Rmd'] ],

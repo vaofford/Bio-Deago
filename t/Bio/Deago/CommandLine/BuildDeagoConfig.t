@@ -20,23 +20,23 @@ BEGIN {
 my $script_name = 'Bio::Deago::CommandLine::BuildDeagoConfig';
 system('touch empty_file');
 
-my $results_directory = make_results_directory();
-die "Resuls directory path unsafe" if ( !defined($results_directory) || $results_directory eq "" || $results_directory !~ m/deago_test_results/ );
+my $output_directory = make_output_directory();
+die "Output directory path unsafe" if ( !defined($output_directory) || $output_directory eq "" || $output_directory !~ m/deago_test_output/ );
 
-build_default_config_file( 'expected_default_deago.config', $results_directory );
-build_qc_config_file( 'expected_qc_deago.config', $results_directory );
-build_go_config_file( 'expected_go_deago.config', $results_directory );
-build_keep_images_config_file( 'expected_keep_images_deago.config', $results_directory );
-build_expression_config_file( 'expected_expression_deago.config', $results_directory );
-build_featurecounts_config_file( 'expected_featurecounts_deago.config', $results_directory );
+build_default_config_file( 'expected_default_deago.config', $output_directory );
+build_qc_config_file( 'expected_qc_deago.config', $output_directory );
+build_go_config_file( 'expected_go_deago.config', $output_directory );
+build_keep_images_config_file( 'expected_keep_images_deago.config', $output_directory );
+build_expression_config_file( 'expected_expression_deago.config', $output_directory );
+build_featurecounts_config_file( 'expected_featurecounts_deago.config', $output_directory );
 
 my %scripts_and_expected_files = (
-      "-t t/data/example_targets.tsv -c t/data/example_counts -r $results_directory" 																							=> [ ['deago.config'], ['expected_default_deago.config'] ],
-      "-t t/data/example_targets.tsv -c t/data/example_counts -r $results_directory --qc"																					=> [ ['deago.config'], ['expected_qc_deago.config'] ],
-      "-t t/data/example_targets.tsv -c t/data/example_counts -r $results_directory -a t/data/example_deago_annotation.tsv --go" 	=> [ ['deago.config'], ['expected_go_deago.config'] ],
-      "-t t/data/example_targets.tsv -c t/data/example_counts -r $results_directory --keep_images" 																=> [ ['deago.config'], ['expected_keep_images_deago.config'] ],
-      "-t t/data/example_targets.tsv -c t/data/example_counts -r $results_directory --count_type featurecounts" 									=> [ ['deago.config'], ['expected_featurecounts_deago.config'] ],
-      "-t t/data/example_targets.tsv -c t/data/example_counts -r $results_directory --count_type expression" 											=> [ ['deago.config'], ['expected_expression_deago.config'] ],
+      "-t t/data/example_targets.tsv -c t/data/example_counts -r $output_directory" 																							=> [ ['deago.config'], ['expected_default_deago.config'] ],
+      "-t t/data/example_targets.tsv -c t/data/example_counts -r $output_directory --qc"																					=> [ ['deago.config'], ['expected_qc_deago.config'] ],
+      "-t t/data/example_targets.tsv -c t/data/example_counts -r $output_directory -a t/data/example_deago_annotation.tsv --go" 	=> [ ['deago.config'], ['expected_go_deago.config'] ],
+      "-t t/data/example_targets.tsv -c t/data/example_counts -r $output_directory --keep_images" 																=> [ ['deago.config'], ['expected_keep_images_deago.config'] ],
+      "-t t/data/example_targets.tsv -c t/data/example_counts -r $output_directory --count_type featurecounts" 										=> [ ['deago.config'], ['expected_featurecounts_deago.config'] ],
+      "-t t/data/example_targets.tsv -c t/data/example_counts -r $output_directory --count_type expression" 											=> [ ['deago.config'], ['expected_expression_deago.config'] ],
       '-h' => [ ['empty_file'], ['t/data/empty_file'] ],
 );
 

@@ -11,12 +11,15 @@ RNA-Seq differential expression qc and analysis
 use Moose;
 use Config::General;
 use File::Basename;
+use File::Spec::Functions 'catfile';
+use Cwd qw(getcwd);
 use Log::Log4perl qw(:easy);
 
 use Data::Dumper;
 
 with 'Bio::Deago::Config::Role';
 
+has 'output_directory'      => ( is => 'rw', isa => 'Str',      default => '.' );
 has 'convert_annotation'    => ( is => 'rw', isa => 'Bool',     default => 0 );
 has 'annotation_delimiter'  => ( is => 'rw', isa => 'Str',      default => '\t' );
 has 'annotation_outfile'    => ( is => 'rw', isa => 'Str' );
@@ -31,6 +34,14 @@ has 'logger'                => ( is => 'ro', lazy => 1, builder => '_build_logge
 
 sub run {
   my ($self) = @_;
+
+  if ( defined($self->output_directory) && $self->output_directory ne '.' ) {
+    my $cwd = getcwd();
+    $self->config_hash->{'config'}->{'results_directory'} = $self->output_directory if ( $self->config_hash->{'config'}->{'results_directory'} eq $cwd );
+    $self->markdown_file( catfile($self->output_directory, basename($self->markdown_file)) ) if ( dirname($self->markdown_file) eq '.' );
+    $self->html_file( catfile($self->output_directory, basename($self->html_file)) ) if ( dirname($self->html_file) eq '.' );
+    $self->config_file( catfile($self->output_directory, basename($self->config_file)) ) if ( dirname($self->config_file) eq '.' );  
+  }
 
   $self->annotation_outfile( $self->_build_annotation_outfile ) if ( $self->convert_annotation );
 

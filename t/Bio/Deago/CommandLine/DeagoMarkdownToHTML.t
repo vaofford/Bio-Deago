@@ -19,10 +19,10 @@ BEGIN {
 my $script_name = 'Bio::Deago::CommandLine::DeagoMarkdownToHtml';
 system('touch empty_file');
 
-my $results_directory = make_results_directory();
-die "Resuls directory path unsafe" if ( !defined($results_directory) || $results_directory eq "" || $results_directory !~ m/deago_test_results/ );
+my $output_directory = make_output_directory();
+die "Output directory path unsafe" if ( !defined($output_directory) || $output_directory eq "" || $output_directory !~ m/deago_test_output/ );
 
-build_default_config_file( 'expected_default_deago.config', $results_directory );
+build_default_config_file( 'expected_default_deago.config', $output_directory );
 my $markdown_cmd = "build_deago_markdown -c expected_default_deago.config";
 system($markdown_cmd);
 

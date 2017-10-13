@@ -30,7 +30,7 @@ sub build_test_config_file {
 sub build_default_config_file {
     my $config_file = $_[0];
     my $results_directory = $_[1];
-    die "Error: results directory path not safe" if ( !-d $results_directory || $results_directory !~ m/deago_test_results/ );
+    die "Error: results directory path not safe" if ( !-d $results_directory || $results_directory !~ m/deago_test_output/ );
 
     my %config =    (   'count_column'      => 5,
                         'count_delim'       => ",",
@@ -53,7 +53,7 @@ sub build_default_config_file {
 sub build_mart_config_file {
     my $config_file = $_[0];
     my $results_directory = $_[1];
-    die "Error: results directory path not safe" if ( !-d $results_directory || $results_directory !~ m/deago_test_results/ );
+    die "Error: results directory path not safe" if ( !-d $results_directory || $results_directory !~ m/deago_test_output/ );
 
     my %config =    (   'count_column'      => 5,
                         'count_delim'       => ",",
@@ -77,7 +77,7 @@ sub build_mart_config_file {
 sub build_keep_images_config_file {
     my $config_file = $_[0];
     my $results_directory = $_[1];
-    die "Error: results directory path not safe" if ( !-d $results_directory || $results_directory !~ m/deago_test_results/ );
+    die "Error: results directory path not safe" if ( !-d $results_directory || $results_directory !~ m/deago_test_output/ );
 
     my %config =    (   'count_column'      => 5,
                         'count_delim'       => ",",
@@ -100,7 +100,7 @@ sub build_keep_images_config_file {
 sub build_qc_config_file {
     my $config_file = $_[0];
     my $results_directory = $_[1];
-    die "Error: results directory path not safe" if ( !-d $results_directory || $results_directory !~ m/deago_test_results/ );
+    die "Error: results directory path not safe" if ( !-d $results_directory || $results_directory !~ m/deago_test_output/ );
     
     my %config =    (   'count_column'      => 5,
                         'count_delim'       => ",",
@@ -123,7 +123,7 @@ sub build_qc_config_file {
 sub build_go_config_file {
     my $config_file = $_[0];
     my $results_directory = $_[1];
-    die "Error: results directory path not safe" if ( !-d $results_directory || $results_directory !~ m/deago_test_results/ );
+    die "Error: results directory path not safe" if ( !-d $results_directory || $results_directory !~ m/deago_test_output/ );
     
     my %config =    (   'count_column'      => 5,
                         'count_delim'       => ",",
@@ -147,7 +147,7 @@ sub build_go_config_file {
 sub build_expression_config_file {
     my $config_file = $_[0];
     my $results_directory = $_[1];
-    die "Error: results directory path not safe" if ( !-d $results_directory || $results_directory !~ m/deago_test_results/ );
+    die "Error: results directory path not safe" if ( !-d $results_directory || $results_directory !~ m/deago_test_output/ );
     
     my %config =    (   'count_column'      => 5,
                         'count_delim'       => ",",
@@ -170,7 +170,7 @@ sub build_expression_config_file {
 sub build_featurecounts_config_file {
     my $config_file = $_[0];
     my $results_directory = $_[1];
-    die "Error: results directory path not safe" if ( !-d $results_directory || $results_directory !~ m/deago_test_results/ );
+    die "Error: results directory path not safe" if ( !-d $results_directory || $results_directory !~ m/deago_test_output/ );
     
     my %config =    (   'count_column'      => 7,
                         'count_delim'       => "\\t",

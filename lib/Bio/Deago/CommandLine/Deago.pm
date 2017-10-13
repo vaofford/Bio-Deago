@@ -33,6 +33,7 @@ has 'config_hash'     				=> ( is => 'rw', isa => 'Config::General');
 has 'config_file' 						=> ( is => 'rw', isa => 'Str', 			default => './deago.config' );
 has 'markdown_file' 					=> ( is => 'rw', isa => 'Str', 			default => './deago_markdown.Rmd' );
 has 'html_file' 							=> ( is => 'rw', isa => 'Str', 			default => './deago_markdown.html' );
+has 'output_directory' 				=> ( is => 'rw', isa => 'Str', 			default => '.' );
 
 sub BUILD {
 	my ($self) = @_;
@@ -43,11 +44,13 @@ sub BUILD {
 				$qvalue, 				$count_type, 				$count_delim,				 	$count_column, 
 				$skip_lines, 		$gene_ids, 					$keep_images, 				$qc_only, 
 				$go_analysis, 	$go_levels, 				$cmd_version, 				$config_file,
+				$output_directory
 			);
 
 	GetOptionsFromArray(
 		$self->args,
 		'v|verbose'           		=> \$verbose,
+		'o|output_directory=s'		=> \$output_directory,
 		'convert_annotation'			=> \$convert_annotation,
 		'annotation_delim=s'			=> \$annotation_delimiter,
 		'build_config'						=> \$build_config,
@@ -91,15 +94,23 @@ sub BUILD {
 		$self->_error_message("Error: You need to remove trailing arguements");
 	}
 
+	$self->output_directory($output_directory) if ( defined($output_directory) && $output_directory ne '.' );
+	$self->_error_message("Error: Output directory doesn't exist: " . $self->output_directory) if( defined($self->output_directory) && !-e $self->output_directory );
+	if ( defined($self->output_directory) && $self->output_directory ne '.') {
+		$self->markdown_file(  )
+	}
+	
 	$self->convert_annotation($convert_annotation)						if ( defined($convert_annotation) );
 	$self->annotation_delimiter($annotation_delimiter)				if ( defined($annotation_delimiter) );
 	$self->build_config($build_config)												if ( defined($build_config) );
+
 	$self->config_file($config_file)													if ( defined($config_file) );
 	$self->markdown_file($markdown_file)											if ( defined($markdown_file) );
 	$self->html_file($html_file)															if ( defined($html_file) );
 
 	$self->counts_directory($counts_directory)								if ( defined($counts_directory) );
 	$self->targets_file($targets_file)												if ( defined($targets_file) );
+
 	$self->results_directory($results_directory) 							if ( defined($results_directory) );
 	$self->annotation_file($annotation_file) 									if ( defined($annotation_file) );
 	$self->control($control) 																	if ( defined($control) );
@@ -154,7 +165,8 @@ sub run {
 	$self->config_hash($config_hash) if ( defined($config_hash) );
 
 	$self->logger->info("Running DEAGO...");
-	my $deago_obj = Bio::Deago->new(	convert_annotation		=> $self->convert_annotation,
+	my $deago_obj = Bio::Deago->new(	output_directory			=> $self->output_directory,
+																		convert_annotation		=> $self->convert_annotation,
 																		annotation_delimiter	=> $self->annotation_delimiter,
 																		build_config 					=> $self->build_config,
 																		config_hash 					=> $self->config_hash,
@@ -184,6 +196,7 @@ Usage: deago [options]
 RNA-Seq differential expression qc and analysis
 
 Main options:
+  --output_directory (-o) output directory [.]
   --convert_annotation    convert annotation for use with deago (requires -a)
   --annotation_delim      annotation file delimiter [\\t]
   --build_config          build configuration file from command line arguments (see configuration options)

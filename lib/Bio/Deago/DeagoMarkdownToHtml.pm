@@ -2,10 +2,11 @@ package Bio::Deago::DeagoMarkdownToHtml;
 
 use Moose;
 use File::Basename;
+use File::Spec::Functions 'catfile';
 
 has 'markdown_file'		=> ( is => 'ro', isa => 'Str', 	default => "./deago_markdown.Rmd");
 has 'html_file'				=> ( is => 'ro', isa => 'Str', 	default => "./deago_markdown.html");
-has 'rlog'						=> ( is => 'ro', isa => 'Str', 	default =>'./deago.rlog');
+has 'rlog'						=> ( is => 'ro', isa => 'Str', 	lazy=> 1, builder=>'_build_rlog');
 
 sub _markdown_file_exists {
 	my ($self) = @_;
@@ -19,6 +20,13 @@ sub _html_file_exists {
 	Bio::Deago::Exceptions::FileNotFound->throw( error => "Error: Could not find HTML report: " . $self->html_file . "\n" )
     unless ( defined($self->html_file) && -e dirname($self->html_file) );	
   return 1;
+}
+
+sub _build_rlog {
+	my ($self) = @_;
+	my $rlog_directory = dirname($self->markdown_file);
+	my $rlog_file = catfile($rlog_directory, 'deago.rlog');
+	return $rlog_file;
 }
 
 sub run {

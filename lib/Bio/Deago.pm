@@ -41,7 +41,7 @@ sub run {
     $self->markdown_file( catfile($self->output_directory, basename($self->markdown_file)) ) if ( dirname($self->markdown_file) eq '.' );
     $self->html_file( catfile($self->output_directory, basename($self->html_file)) ) if ( dirname($self->html_file) eq '.' );
     $self->config_file( catfile($self->output_directory, basename($self->config_file)) ) if ( dirname($self->config_file) eq '.' );  
-  }
+   }
 
   $self->annotation_outfile( $self->_build_annotation_outfile ) if ( $self->convert_annotation );
 

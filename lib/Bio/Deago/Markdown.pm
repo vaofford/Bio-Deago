@@ -42,7 +42,8 @@ sub _get_template_files {
 
 	my %template_files = (
 		'qc' => ['header.Rmd', 'config.Rmd', 'import.Rmd', 'deseq.Rmd', 'annotation.Rmd', 'qc_plots.Rmd'],
-		'de_main' => ['contrast_main.Rmd', 'contrast_venn.Rmd'],
+		'de_main' => ['contrast_main.Rmd'],
+		'de_venn' => ['contrast_venn.Rmd'],
 		'de_sections' => ['contrast_section.Rmd'],
 		'go_main' => ['go_main.Rmd'],
 		'go_sections' => ['go_section.Rmd']
@@ -76,11 +77,16 @@ sub _build_markdown {
 	if ( $self->config_hash->{'config'}{'qc_only'} == 0 ) {
 		my @replaced_de_main_text = @{ $self->_replace_template_values( $self->template_files->{'de_main'}, $self->replacement_values->{'de_main'} ) };
 		push( @replaced_text, @replaced_de_main_text );
+
+		if ( scalar(@{$self->contrasts}) <= 4 ) {
+			my @replaced_de_main_text = @{ $self->_replace_template_values( $self->template_files->{'de_venn'}, $self->replacement_values->{'de_venn'} ) };
+			push( @replaced_text, @replaced_de_main_text );
+		}
+
 		my @replaced_de_section_text = @{ $self->_get_contrast_text() };
 		push( @replaced_text, @replaced_de_section_text );
 	}
-
-		return \@replaced_text;
+	return \@replaced_text;
 }
 
 sub _get_contrast_text {

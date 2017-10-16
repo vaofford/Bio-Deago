@@ -1,5 +1,8 @@
 language: perl
+sudo: false
+
 perl:
   - "5.14"
-sudo: true
+- "5.26"
+
 script: "dzil test"

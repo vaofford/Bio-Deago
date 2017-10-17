@@ -15,8 +15,6 @@ use File::Spec::Functions 'catfile';
 use Cwd qw(getcwd);
 use Log::Log4perl qw(:easy);
 
-use Data::Dumper;
-
 with 'Bio::Deago::Config::Role';
 
 has 'output_directory'      => ( is => 'rw', isa => 'Str',      default => '.' );

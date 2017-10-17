@@ -4,8 +4,6 @@ use Moose;
 use File::Slurper qw(read_lines);
 use Text::CSV::Hashify;
 
-use Data::Dumper;
-
 has 'config_hash' 		=> ( is => 'ro', isa => 'Config::General', 	required => 1);
 has 'targets_file'		=> ( is => 'rw', isa => 'Str');
 has 'targets'					=> ( is => 'ro', isa => 'ArrayRef',					lazy => 1, 		builder => '_read_targets' );

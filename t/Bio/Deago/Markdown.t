@@ -5,7 +5,6 @@ use warnings;
 
 use Moose;
 use Test::Files;
-use Data::Dumper;
 use Cwd qw(abs_path);
 use File::Basename;
 
@@ -16,7 +15,6 @@ with 'ConfigTestHelper';
 
 BEGIN {
     use Test::Most;
-#    use Bio::Deago::Exceptions;
 		use Bio::Deago::BuildDeagoMarkdown;
     use_ok('Bio::Deago::Markdown');
 }

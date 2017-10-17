@@ -10,8 +10,6 @@ use Bio::Deago::Exceptions;
 use Bio::Deago::Targets;
 use Bio::Deago::Markdown;
 
-use Data::Dumper;
-
 with 'Bio::Deago::Config::Role';
 
 has 'config_file' 		=> ( is => 'ro', isa => 'Str', required => 1);

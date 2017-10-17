@@ -9,7 +9,6 @@ Test helper
 
 use Moose::Role;
 use Test::Most;
-use Data::Dumper;
 use Test::Files;
 use Test::Output;
 use Cwd;

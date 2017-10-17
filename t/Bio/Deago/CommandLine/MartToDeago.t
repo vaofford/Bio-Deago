@@ -1,7 +1,6 @@
 #!/usr/bin/env perl
 
 use Moose;
-use Data::Dumper;
 use Cwd;
 use File::Slurper;
 

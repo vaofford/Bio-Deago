@@ -6,8 +6,6 @@ use File::Basename;
 use Text::Template;
 use File::Slurper qw(write_text);
 
-use Data::Dumper;
-
 has 'config_file' 				=> ( is => 'ro', isa => 'Str', 							required => 1);
 has 'config_hash' 				=> ( is => 'rw', isa => 'Config::General', 	required => 1);
 has 'contrasts'						=> ( is => 'ro', isa => 'ArrayRef', 				required => 1);

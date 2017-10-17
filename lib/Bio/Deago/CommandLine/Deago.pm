@@ -12,7 +12,6 @@ RNA-Seq differential expression qc and analysis
 use Moose;
 use Getopt::Long qw(GetOptionsFromArray);
 use File::Basename;
-use Data::Dumper;
 
 use Bio::Deago;
 

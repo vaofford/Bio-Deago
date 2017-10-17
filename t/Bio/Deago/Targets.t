@@ -34,7 +34,7 @@ my $bad_targets_obj = $targets_obj;
 $bad_targets_obj->targets->[0]->{'filename'} = "doesNotExist.csv";
 throws_ok{
 	$bad_targets_obj->_count_files_exist
-} qr /Error: Cannot find count file:/, 'error when count file doesn\'t exist';
+} qr /Error: Cannot find count file:/, 'throws error when count file does not exist';
 
 $bad_targets_obj->config_hash->{'config'}{'control'} = 'doesNotExist';
 is( $bad_targets_obj->_control_present, 0, 'returns 0 when control not in targets file' );

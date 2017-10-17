@@ -15,6 +15,7 @@ my $counts_directory = abs_path('t/data/example_counts');
 my $targets_file = abs_path('t/data/example_targets.tsv');
 my $annotation_file = abs_path('t/data/example_deago_annotation.tsv');
 
+
 sub build_test_config_file {
     my ( $config_file, $config_hash ) = @_;
 
@@ -25,6 +26,7 @@ sub build_test_config_file {
                                         -NoEscape           => 'yes'
                                       );
     $config->save_file($config_file);
+    return $config;
 }
 
 sub build_default_config_file {
@@ -47,7 +49,8 @@ sub build_default_config_file {
                         'targets_file'      => $targets_file
                     );
 
-    build_test_config_file( $config_file, \%config );
+    my $config_obj = build_test_config_file( $config_file, \%config );
+    return $config_obj;
 }
 
 sub build_mart_config_file {

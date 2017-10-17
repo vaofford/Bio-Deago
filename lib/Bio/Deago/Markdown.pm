@@ -39,11 +39,11 @@ sub _get_template_files {
 	my ($self) = @_;
 
 	my %template_files = (
-		'qc' => ['header.Rmd', 'config.Rmd', 'import.Rmd', 'deseq.Rmd', 'annotation.Rmd', 'qc_plots.Rmd'],
-		'de_main' => ['contrast_main.Rmd'],
-		'de_venn' => ['contrast_venn.Rmd'],
+		'qc' 					=> ['header.Rmd', 'config.Rmd', 'import.Rmd', 'deseq.Rmd', 'annotation.Rmd', 'qc_plots.Rmd'],
+		'de_main' 		=> ['contrast_main.Rmd'],
+		'de_venn' 		=> ['contrast_venn.Rmd'],
 		'de_sections' => ['contrast_section.Rmd'],
-		'go_main' => ['go_main.Rmd'],
+		'go_main' 		=> ['go_main.Rmd'],
 		'go_sections' => ['go_section.Rmd']
 	);
 
@@ -93,7 +93,8 @@ sub _get_contrast_text {
 	my @temporary_contrast_text;
 	foreach my $contrast_name ( @{$self->contrasts} ) {
 		my %contrast_values = ( 'contrast_name' => $contrast_name ); 
-		my @replaced_contrast_text = @{ $self->_replace_template_values( $self->template_files->{'de_sections'}, \%contrast_values ) };
+		my @replaced_contrast_text = @{ $self->_replace_template_values( $self->template_files->{'de_sections'}, {%contrast_values, %{$self->replacement_values->{'de_main'}}} ) };
+		use Data::Dumper; print Dumper  ;
 		push( @temporary_contrast_text, @replaced_contrast_text );
 
 		if ( $self->config_hash->{'config'}{'go_analysis'} == 1 ) {
@@ -139,6 +140,7 @@ sub _define_replacement_values {
 																						count_column 		  => $self->config_hash->{'config'}{'count_column'},
 																						skip_lines 			  => $self->config_hash->{'config'}{'skip_lines'},
 																						count_delimiter   => $self->config_hash->{'config'}{'count_delim'},
+																						alpha 						=> $self->config_hash->{'config'}{'qvalue'}
                        										},
                        			 de_main 	=> { alpha => $self->config_hash->{'config'}{'qvalue'} },
                        		 	 go_main 	=> { alpha => $self->config_hash->{'config'}{'qvalue'} }
@@ -209,7 +211,7 @@ sub _write_markdown {
 
 	my $text_to_write = join("\n\n", @{$self->final_markdown});
 	write_text($self->output_filename, $text_to_write);
-	
+	return 1;
 }
 
 __PACKAGE__->meta->make_immutable;

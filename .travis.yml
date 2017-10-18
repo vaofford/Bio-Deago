@@ -1,5 +1,5 @@
 language: perl
-sudo: false
+sudo: true
 
 addons:
   apt:
@@ -15,6 +15,15 @@ pandoc_version: 1.16
 install:
   - wget https://cran.r-project.org/src/base/R-3/R-3.4.0.tar.gz 
   - tar -xvf R-3.4.0.tar.gz
-  - pushd R-3.4.0 && ./configure --with-readline=no --with-x --with-cairo --prefix=/usr && make && make install
+  - pushd R-3.4.0 && ./configure --with-readline=no --with-x --with-cairo --prefix=/usr && make && sudo make install
+  - git clone --branch v1.0.1 https://github.com/vaofford/deago.git
+  - pushd deago && git archive --format=tar.gz --prefix=deago-1.0.1/ v1.0.1 >deago-1.0.1.tar.gz
+  - pushd deago && R CMD INSTALL deago-1.0.1.tar.gz
 
-script: "dzil test"
+before_script:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 3 # give xvfb some time to start
+
+script:
+  - "Rscript -e 'capabilities'" 

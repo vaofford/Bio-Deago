@@ -75,7 +75,7 @@ sub _build_deago_config {
   my ($self) = @_;
 
   my $config_cmd_args;
-  foreach my $config_parameter ( keys $self->config_hash->{'config'}  ) {
+  foreach my $config_parameter ( keys %{ $self->config_hash->{'config'} }  ) {
     my $cmd_arg;
     if ( $config_parameter eq "qc_only" || $config_parameter eq "go_analysis" || $config_parameter eq "keep_images" ) {
       if ( $self->config_hash->{'config'}->{$config_parameter} == 1 ) {

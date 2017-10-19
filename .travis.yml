@@ -34,9 +34,6 @@ before_script:
   - sleep 3 # give xvfb some time to start
 
 script:
-  - "Rscript -e 'capabilities()'"
   - "dzil authordeps --missing | cpanm --notest"
   - "dzil listdeps --missing | cpanm --notest"
-  - "perl t/Bio/Deago/CommandLine/Deago.t" 
-  - "ls"
-  - "cat deago.rlog"
+  - "dzil test" 

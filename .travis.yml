@@ -13,8 +13,8 @@ perl:
 pandoc_version: 1.16
 
 env:
-  - R_LIB_USER=/home/travis/build/vaofford/Bio-Deago/R-3.4.0/library
-  - R_LIB=/home/travis/build/vaofford/Bio-Deago/R-3.4.0/library
+  - R_LIBS_USER=/home/travis/build/vaofford/Bio-Deago/R-3.4.0/library
+  - R_LIBS=/home/travis/build/vaofford/Bio-Deago/R-3.4.0/library
 
 install:
   - wget https://cran.r-project.org/src/base/R-3/R-3.4.0.tar.gz 
@@ -25,7 +25,7 @@ install:
   - sudo Rscript -e "source('http://bioconductor.org/biocLite.R')" -e "biocLite(c('DESeq2', 'topGO'), lib='/home/travis/build/vaofford/Bio-Deago/R-3.4.0/library')"
   - git clone --branch v1.0.1 https://github.com/vaofford/deago.git
   - pushd deago && git archive --format=tar.gz --prefix=deago-1.0.1/ v1.0.1 >deago-1.0.1.tar.gz && popd
-  - pushd deago && R CMD INSTALL deago-1.0.1.tar.gz && popd
+  - pushd deago && Rscript -e "('deago-1.0.1.tar.gz', repos = NULL, type='source', lib='/home/travis/build/vaofford/Bio-Deago/R-3.4.0/library')" && popd
 
 cache:
   directories:

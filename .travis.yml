@@ -29,4 +29,4 @@ before_script:
   - sleep 3 # give xvfb some time to start
 
 script:
-  - "Rscript -e 'capabilities'" 
+  - "Rscript -e 'capabilities()'" 

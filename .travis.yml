@@ -15,7 +15,7 @@ pandoc_version: 1.16
 install:
   - wget https://cran.r-project.org/src/base/R-3/R-3.4.0.tar.gz 
   - tar -xvf R-3.4.0.tar.gz
-  - pushd R-3.4.0 && ./configure --with-readline=no --with-x --with-cairo --prefix=/usr && make && sudo make install
+  - pushd R-3.4.0 && ./configure --with-readline=no --with-x --with-cairo --prefix=/usr && make && sudo make install && popd
 
 cache:
   directories:

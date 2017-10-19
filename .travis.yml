@@ -17,6 +17,8 @@ install:
   - tar -xvf R-3.4.0.tar.gz
   - pushd R-3.4.0 && ./configure --with-readline=no --with-x --with-cairo --prefix=/usr && make && sudo make install && popd
   - sudo Rscript -e "install.packages(c('DT', 'ggplot2', 'ggrepel', 'Matrix', 'reshape', 'rmarkdown', 'scales', 'XML'), repos='http://mirrors.ebi.ac.uk/CRAN/')"
+  - sudo Rscript -e "source('http://bioconductor.org/biocLite.R')" -e "biocLite(c('GenomicRanges', 'graph', 'limma', 'SummarizedExperiment', 'S4Vectors'))"
+  - sudo Rscript -e "source('http://bioconductor.org/biocLite.R')" -e "biocLite(c('DESeq2', 'topGO'))"
 
 cache:
   directories:

@@ -39,4 +39,6 @@ before_script:
 
 script:
   - "Rscript -e 'capabilities()'"
+  - "dzil authordeps --missing | cpanm --notest"
+  - "dzil listdeps --missing | cpanm --notest"
   - "dzil test" 

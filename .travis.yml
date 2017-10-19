@@ -29,7 +29,6 @@ install:
 cache:
   directories:
     - ~/build/vaofford/Bio-Deago/R-3.4.0
-    - ~/build/vaofford/Bio-Deago/deago
     - $HOME/R/Library
   apt: true
 

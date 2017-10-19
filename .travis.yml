@@ -13,24 +13,24 @@ perl:
 pandoc_version: 1.16
 
 env:
-  - R_LIBS_USER=/home/travis/build/vaofford/Bio-Deago/R-3.4.0/library
-  - R_LIBS=/home/travis/build/vaofford/Bio-Deago/R-3.4.0/library
+  - R_LIB_USER=$HOME/R/Library
 
 install:
   - wget https://cran.r-project.org/src/base/R-3/R-3.4.0.tar.gz 
   - tar -xvf R-3.4.0.tar.gz
   - pushd R-3.4.0 && ./configure --with-readline=no --with-x --with-cairo --prefix=/usr && make && sudo make install && popd
-  - sudo Rscript -e "install.packages(c('DT', 'ggplot2', 'ggrepel', 'Matrix', 'reshape', 'rmarkdown', 'scales', 'XML'), repos='http://mirrors.ebi.ac.uk/CRAN/', lib='/home/travis/build/vaofford/Bio-Deago/R-3.4.0/library')"
-  - sudo Rscript -e "source('http://bioconductor.org/biocLite.R')" -e "biocLite(c('GenomicRanges', 'graph', 'limma', 'SummarizedExperiment', 'S4Vectors'), lib='/home/travis/build/vaofford/Bio-Deago/R-3.4.0/library')"
-  - sudo Rscript -e "source('http://bioconductor.org/biocLite.R')" -e "biocLite(c('DESeq2', 'topGO'), lib='/home/travis/build/vaofford/Bio-Deago/R-3.4.0/library')"
+  - sudo Rscript -e "install.packages(c('DT', 'ggplot2', 'ggrepel', 'Matrix', 'reshape', 'rmarkdown', 'scales', 'XML'), repos='http://mirrors.ebi.ac.uk/CRAN/', lib='$HOME/R/Library')"
+  - sudo Rscript -e "source('http://bioconductor.org/biocLite.R')" -e "biocLite(c('GenomicRanges', 'graph', 'limma', 'SummarizedExperiment', 'S4Vectors'), lib='$HOME/R/Library')"
+  - sudo Rscript -e "source('http://bioconductor.org/biocLite.R')" -e "biocLite(c('DESeq2', 'topGO'), lib='$HOME/R/Library')"
   - git clone --branch v1.0.1 https://github.com/vaofford/deago.git
   - pushd deago && git archive --format=tar.gz --prefix=deago-1.0.1/ v1.0.1 >deago-1.0.1.tar.gz && popd
-  - pushd deago && Rscript -e "install.packages('deago-1.0.1.tar.gz', repos = NULL, type='source', lib='/home/travis/build/vaofford/Bio-Deago/R-3.4.0/library')" && popd
+  - pushd deago && sudo Rscript -e "install.packages('deago-1.0.1.tar.gz', repos = NULL, type='source', lib='$HOME/R/Library')" && popd
 
 cache:
   directories:
     - ~/build/vaofford/Bio-Deago/R-3.4.0
     - ~/build/vaofford/Bio-Deago/deago
+    - $HOME/R/Library
   apt: true
 
 before_script:

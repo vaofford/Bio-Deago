@@ -74,12 +74,13 @@ sub BUILD {
 sub run {
 	my ($self) = @_;
 
+	$self->_set_R_environment;
+
 	if ( defined( $self->_error_message ) ) {
 		print $self->_error_message . "\n";
 		die $self->usage_text;
 	}
 
-#	
 	my $html_obj = Bio::Deago::DeagoMarkdownToHtml->new(
             	markdown_file		=> $self->markdown_file,
             	html_file				=> $self->output_filename,

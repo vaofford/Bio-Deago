@@ -117,5 +117,23 @@ sub build_star_delimited_annotation_file {
     write_text('star_delimited_annotation.txt', $star_delim_annotation);
 }
 
+sub check_deago_environment_variables {    
+    my $original_path = $ENV{PATH};
+    my $original_rlibs = $ENV{R_LIBS};
+
+    # Change R executable and libraries here if this pair of tests fail!
+    my $deago_r = "/software/R-3.4.0/bin";
+    my $deago_rlibs = "/software/pathogen/external/lib/R-3.4";
+
+    $ENV{PATH} = join(":", $deago_r, $ENV{PATH});
+    $ENV{R_LIBS} = $deago_rlibs;
+
+    like( $ENV{PATH}, qr/^$deago_r/, 'DEAGO_R (R version bin) added to PATH');
+    is( $ENV{R_LIBS}, $deago_rlibs, 'DEAGO_R_LIBS (R libraries) added to R_LIBS');
+
+    $ENV{PATH} = $original_path;
+    $ENV{R_LIBS} = $original_rlibs;
+}
+
 no Moose;
 1;

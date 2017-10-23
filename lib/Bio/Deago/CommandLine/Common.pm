@@ -11,9 +11,12 @@ Common command line settings
 use Moose;
 use FindBin;
 use Log::Log4perl qw(:easy);
+use MooseX::Attribute::ENV;
 
-has 'logger'                  => ( is => 'ro', lazy => 1, builder => '_build_logger');
-has 'version'                 => ( is => 'rw', isa => 'Bool', default => 0 );
+has 'R'                 => ( is => 'ro', traits => ['ENV'], env_prefix => 'DEAGO');
+has 'R_LIBS'            => ( is => 'ro', traits => ['ENV'], env_prefix => 'DEAGO');
+has 'logger'            => ( is => 'ro', lazy => 1, builder => '_build_logger');
+has 'version'           => ( is => 'rw', isa => 'Bool', default => 0 );
 
 sub _build_logger
 {
@@ -38,6 +41,13 @@ sub _version {
     return "x.y.z\n";
 }
 
+sub _set_R_environment {
+    my ($self) = @_;
+
+    $ENV{PATH} = $self->R . ":$ENV{PATH}" if ( defined $self->R );
+    $ENV{R_LIBS_USER} = $self->R_LIBS if ( defined $self->R_LIBS );
+
+}
 
 # add our included binaries to the END of the PATH
 #before 'run' => sub {

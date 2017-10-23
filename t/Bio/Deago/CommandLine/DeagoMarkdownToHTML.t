@@ -21,6 +21,9 @@ system('touch empty_file');
 my $output_directory = make_output_directory();
 die "Output directory path unsafe" if ( !defined($output_directory) || $output_directory eq "" || $output_directory !~ m/deago_test_output/ );
 
+check_deago_environment_variables();
+ok ( my $build_html_obj = Bio::Deago::CommandLine::DeagoMarkdownToHtml->new( args => \@ARGV, script_name => $0 ) ,'initialise build configuration object');
+
 build_default_config_file( 'expected_default_deago.config', $output_directory );
 my $markdown_cmd = "build_deago_markdown -c expected_default_deago.config";
 system($markdown_cmd);
@@ -38,6 +41,8 @@ stdout_should_have( $script_name, '-i bad_markdown', 										'Error: Cannot fi
 stdout_should_have( $script_name, '-c deago_markdown.Rmd  -d badDir', 	'Error: Could not find output directory for html file' );
 
 mock_execute_script_and_check_output( $script_name, \%scripts_and_expected_files );
+
+check_deago_environment_variables();
 
 unlink( 'expected_default_deago.config' );
 unlink( 'deago_markdown.Rmd' );

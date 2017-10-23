@@ -147,6 +147,8 @@ sub BUILD {
 sub run {
 	my ($self) = @_;
 
+	$self->_set_R_environment;
+
 	if ( defined( $self->_error_message ) ) {
 		print $self->_error_message . "\n";
 		die $self->usage_text;

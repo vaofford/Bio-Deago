@@ -99,7 +99,7 @@ Converts a tab-delimited annotation file (e.g. from BioMart) for use with DEAGO
 
 Options: -a STR        annotation file
          -o STR        output filename for deago annotation file [deago_annotation.tsv]
-         -d STR        output directory for deago annnotation file [.]
+         -d STR        output directory for deago annotation file [.]
          -s STR        input file field separator [\\t]
          -v            verbose output to STDOUT
          -w            print version and exit

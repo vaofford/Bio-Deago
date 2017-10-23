@@ -123,7 +123,8 @@ sub run {
 	my $config_hash = $self->build_config_hash();
 	$self->config_hash($config_hash) if ( defined($config_hash) );
 
-	if ( $self->config_is_valid() ) {
+	if ( $self->config_is_valid() ) {	
+
 		my $deago_config = Bio::Deago::BuildDeagoConfig->new( 'config' => $self->config_hash, 'config_file' => $self->config_file );
 		$deago_config->build_config_file() or $self->logger->error("Error: Could not write configuration file:" . $self->config_file);
 	} else {
@@ -162,7 +163,7 @@ Configuration options (optional):
   --count_column number of column containing count values
   --skip_lines   number of lines to skip in count file
   --count_delim  count file delimiter
-  --gene_ids      name of column containing gene ids
+  --gene_ids     name of column containing gene ids
 
 
 The companion DEAGO R package needs a configuration file containing key/value pairs to define the 

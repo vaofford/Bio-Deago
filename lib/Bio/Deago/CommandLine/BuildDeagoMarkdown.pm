@@ -90,7 +90,7 @@ sub usage_text {
 	my ($self) = @_;
 
 	return <<USAGE;
-Usage: build_markdown [options]
+Usage: build_deago_markdown [options]
 Takes in R markdown template files and builds a master R markdown file using parameters (key/value 
 pairs) from a configuration file.  
 
@@ -101,7 +101,7 @@ Options: -c STR        deago configuration file [./deago.config]
          -w            print version and exit
          -h            this help message
 
-DEAGO takes in a configuration file (-c) containing key/value pairs [default: ./deago.config]. 
+DEAGO takes in a configuration file (-c) containing key/value pairs [./deago.config]. 
 For more information on configuration parameters run: build_deago_config -h.
 
 DEAGO builds a master R markdown file from templates which utilize the companion DEAGO R package 

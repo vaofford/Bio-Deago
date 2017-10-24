@@ -45,7 +45,7 @@ sub _set_R_environment {
     my ($self) = @_;
 
     $ENV{PATH} = $self->R . ":$ENV{PATH}" if ( defined $self->R );
-    $ENV{R_LIBS_USER} = $self->R_LIBS if ( defined $self->R_LIBS );
+    $ENV{R_LIBS} = $self->R_LIBS if ( defined $self->R_LIBS );
 
 }
 

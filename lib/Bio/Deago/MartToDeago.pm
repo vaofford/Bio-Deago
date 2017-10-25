@@ -9,10 +9,11 @@ use Bio::Deago::Exceptions;
 
 no warnings 'uninitialized';
 
-has 'annotation_file' 		=> ( is => 'ro', isa => 'Str', 			required => 1);
-has 'output_filename'			=> ( is => 'ro', isa => 'Str', 			default => "./deago_annotation.tsv");
-has 'separator'						=> ( is => 'ro', isa => 'Str', 			default => "\t");
-has 'annotations'					=> ( is => 'rw', isa => 'ArrayRef', lazy => 1, 	builder => '_read_annotation');
+has 'annotation_file' 		=> ( is => 'ro', isa => 'Str', 			required => 1 );
+has 'output_filename'			=> ( is => 'ro', isa => 'Str', 			default => "./deago_annotation.tsv" );
+has 'separator'						=> ( is => 'ro', isa => 'Str', 			default => "\t" );
+has 'header'							=> ( is => 'ro', isa => 'Bool',			default => 0 );
+has 'annotations'					=> ( is => 'rw', isa => 'ArrayRef', lazy => 1, 	builder => '_read_annotation' );
 has 'convert_annotation'	=> ( is => 'ro', isa => 'Bool', 		lazy => 1, 	builder => '_convert_annotation' );
 
 sub BUILD {
@@ -46,19 +47,21 @@ sub _annotation_file_exists {
 sub _collapse_annotation {
 	my ($self) = @_;
 	my $separator = $self->separator;
-	my (%split_annotations, @collapsed_annotations, $header);
+	my (%split_annotations, @collapsed_annotations);
 
 	my @annotations = @{ $self->annotations };
-	foreach (@annotations)
+	for (my $a=0; $a < scalar(@annotations); $a++)
 	{
-		# Necessary to capture empty fields
-		my ($identifier, @data) = map { $_ eq '' ? 'undefined_value' : $_ } split /$separator/, $_, -1; 
-
-		for (my $i=0; $i < scalar(@data); $i++)
+		unless ( $self->{'header'} && $a == 0 ) 
 		{
-			if (!exists $split_annotations{$identifier}{$i}{$data[$i]})
+			# Necessary to capture empty fields
+			my ($identifier, @data) = map { $_ eq '' ? 'undefined_value' : $_ } split /$separator/, $annotations[$a], -1; 
+			for (my $i=0; $i < scalar(@data); $i++)
 			{
-				$split_annotations{$identifier}{$i}{$data[$i]} = 1;
+				if (!exists $split_annotations{$identifier}{$i}{$data[$i]})
+				{
+					$split_annotations{$identifier}{$i}{$data[$i]} = 1;
+				}
 			}
 		}
 	}
@@ -67,21 +70,15 @@ sub _collapse_annotation {
 	{
 		my $line=$identifier;
 
-		foreach my $column (sort keys %{$split_annotations{$identifier}})
+		foreach my $column ( sort keys %{$split_annotations{$identifier}} )
 		{
 			$line .= "\t" . join(";", sort keys %{$split_annotations{$identifier}{$column}});
 		}
-		$line =~ s/undefined_value//g;
-		
-		if ($line !~ /Gene stable ID/)
-		{	
-			push(@collapsed_annotations, $line);
-		} else {
-			$header = $line;
-		}
-	}
 
-	unshift(@collapsed_annotations, $header);
+		$line =~ s/undefined_value//g;
+
+		push( @collapsed_annotations, $line ) if $line !~ m/Gene stable ID/;
+	}
 
 	my $annotation = join("\n", @collapsed_annotations);
 

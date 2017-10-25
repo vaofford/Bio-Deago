@@ -20,15 +20,16 @@ has 'help'         			=> ( is => 'rw', isa => 'Bool', 		default => 0 );
 has '_error_message' 		=> ( is => 'rw', isa => 'Str' );
 has 'verbose' 					=> ( is => 'rw', isa => 'Bool', 		default => 0 );
 has 'annotation_file' 	=> ( is => 'rw', isa => 'Str');
-has 'separator' 				=> ( is => 'rw', isa => 'Str', 			default => "\t");
-has 'output_file' 			=> ( is => 'rw', isa => 'Str', 			default=>'deago_annotation.tsv');
+has 'separator' 				=> ( is => 'rw', isa => 'Str', 			default => "\t" );
+has 'header'		 				=> ( is => 'rw', isa => 'Bool', 		default => 0 );
+has 'output_file' 			=> ( is => 'rw', isa => 'Str', 			default=>'deago_annotation.tsv' );
 has 'output_directory'	=> ( is => 'rw', isa => 'Str', 			default => '.' );
-has 'output_filename'		=> ( is => 'rw', isa => 'Str', 			default => './deago_annotation.tsv');
+has 'output_filename'		=> ( is => 'rw', isa => 'Str', 			default => './deago_annotation.tsv' );
 
 sub BUILD {
 	my ($self) = @_;
 
-	my ( $help, $verbose, $cmd_version, $output_file, $output_directory, $annotation_file, $separator );
+	my ( $help, $verbose, $cmd_version, $output_file, $output_directory, $annotation_file, $separator, $header );
 
 	GetOptionsFromArray(
 		$self->args,
@@ -37,6 +38,7 @@ sub BUILD {
 		'd|output_directory=s'	=> \$output_directory,
 		'a|annotation_file=s'		=> \$annotation_file,
 		's|separator=s'					=> \$separator,
+		'header'								=> \$header,
 		'w|version'             => \$cmd_version,
 		'h|help'                => \$help
 	);
@@ -66,6 +68,7 @@ sub BUILD {
 	$self->_error_message("Error: Cannot find annotation file: " . $self->annotation_file) if ( !-e $self->annotation_file && defined($annotation_file) );
 
 	$self->separator( $separator ) 														if ( defined($separator) );
+	$self->header( $header ) 																	if ( defined($header) );
 	$self->output_file( $output_file ) 												if ( defined($output_file) );
 	$self->output_directory( $output_directory =~ s/\/$//r ) 	if ( defined($output_directory) );
 	$self->_error_message("Error: Could not find output directory for annotation file: " . $self->output_directory) if ( !-d $self->output_directory && defined($output_directory) );
@@ -85,7 +88,8 @@ sub run {
 	my $obj = Bio::Deago::MartToDeago->new(
             	annotation_file	=> $self->annotation_file,
             	output_filename	=> $self->output_filename,
-            	separator				=> $self->separator
+            	separator				=> $self->separator, 
+            	header					=> $self->header
    					);
 	$obj->convert_annotation() or $self->logger->error( "Error: Could not write annotation file:" . $self->annotation_file);
 }
@@ -101,6 +105,7 @@ Options: -a STR        annotation file
          -o STR        output filename for deago annotation file [deago_annotation.tsv]
          -d STR        output directory for deago annotation file [.]
          -s STR        input file field separator [\\t]
+         --header      input file contains a header row
          -v            verbose output to STDOUT
          -w            print version and exit
          -h            this help message
@@ -111,7 +116,9 @@ Converts a tab-delimited file (e.g. from BioMart) for use with the RNA-Seq expre
 analysis pipeline (DEAGO).  Output is a tab delimited file where each row represents 
 a unique value from the first column (assumed to be the gene id for DEAGO). Remaining 
 column values from rows sharing the same unique identifier are collapsed and 
-semi-colon separated (;).
+semi-colon separated (;).  The converted annotation file should not have a header.  If 
+a header line is present in the input file use the --header option to leave this out 
+of the converted annotation file.
 
 # Example for human
  1) Go to http://www.ensembl.org/biomart/martview

@@ -1,0 +1,8 @@
+Head1	Head2	Head3
+normal	gene1	GO:0051015
+normal	gene1	GO:0005515
+multiGene	gene1	GO:0016020
+multiGene	gene2	GO:0016021
+multiGene	gene2	GO:0005515
+geneOnly	gene1	
+goOnly		GO:0005515

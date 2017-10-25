@@ -76,7 +76,7 @@ sub _build_markdown {
 		my @replaced_de_main_text = @{ $self->_replace_template_values( $self->template_files->{'de_main'}, $self->replacement_values->{'de_main'} ) };
 		push( @replaced_text, @replaced_de_main_text );
 
-		if ( scalar(@{$self->contrasts}) <= 4 ) {
+		if ( scalar(@{$self->contrasts}) <= 4 && scalar(@{$self->contrasts}) > 1 ) {
 			my @replaced_de_main_text = @{ $self->_replace_template_values( $self->template_files->{'de_venn'}, $self->replacement_values->{'de_venn'} ) };
 			push( @replaced_text, @replaced_de_main_text );
 		}

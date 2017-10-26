@@ -15,3 +15,4 @@ Pandoc <http://pandoc.org> (>= 1.12.3) is required for the R package 'rmarkdown'
 
 If you get the error "" during the conversion of the R markdown file to the HTML report, please check that your R version is >= 3.4.0 and the Matrix R package is up to date.
 
+

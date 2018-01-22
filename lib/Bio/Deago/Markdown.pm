@@ -6,21 +6,20 @@ use File::Basename;
 use Text::Template;
 use File::Slurper qw(write_text);
 
-has 'config_file' 				=> ( is => 'ro', isa => 'Str', 							required => 1);
-has 'config_hash' 				=> ( is => 'rw', isa => 'Config::General', 	required => 1);
-has 'contrasts'						=> ( is => 'ro', isa => 'ArrayRef', 				required => 1);
-has 'num_samples'					=> ( is => 'rw', isa => 'Num', 							default => 0);
-has 'replacement_values'	=> ( is => 'ro', isa => 'HashRef',					lazy => 1, builder => '_define_replacement_values');
-has 'output_filename'			=> ( is => 'ro', isa => 'Str', 							default => './deago_markdown.Rmd' );
-has 'template_files'			=> ( is => 'rw', isa => 'HashRef', 					lazy => 1, builder => '_get_template_files');
-has 'template_directory'	=> ( is => 'rw', isa => 'Str', 							lazy => 1, builder => '_get_template_directory');
-has 'final_markdown'			=> ( is => 'ro', isa => 'ArrayRef',					lazy => 1, builder => '_build_markdown');
+has 'config_file'		=> ( is => 'ro', isa => 'Str',			required => 1);
+has 'config_hash'		=> ( is => 'rw', isa => 'Config::General', 	required => 1);
+has 'contrasts'			=> ( is => 'ro', isa => 'ArrayRef',		required => 1);
+has 'num_samples'		=> ( is => 'rw', isa => 'Num', 			default => 0);
+has 'replacement_values'	=> ( is => 'ro', isa => 'HashRef',		lazy => 1, builder => '_define_replacement_values');
+has 'output_filename'		=> ( is => 'ro', isa => 'Str', 			default => './deago_markdown.Rmd' );
+has 'template_files'		=> ( is => 'rw', isa => 'HashRef', 		lazy => 1, builder => '_get_template_files');
+has 'template_directory'	=> ( is => 'rw', isa => 'Str', 			lazy => 1, builder => '_get_template_directory');
+has 'final_markdown'		=> ( is => 'ro', isa => 'ArrayRef',		lazy => 1, builder => '_build_markdown');
 
 no Moose;
 
 sub BUILD {
 	my ($self) = @_;
-
 	$self->template_directory;
 	$self->template_files;
 	$self->_templates_exist;
@@ -39,12 +38,12 @@ sub _get_template_files {
 	my ($self) = @_;
 
 	my %template_files = (
-		'qc' 					=> ['header.Rmd', 'config.Rmd', 'import.Rmd', 'deseq.Rmd', 'annotation.Rmd', 'qc_plots.Rmd'],
-		'de_main' 		=> ['contrast_main.Rmd'],
-		'de_venn' 		=> ['contrast_venn.Rmd'],
-		'de_sections' => ['contrast_section.Rmd'],
-		'go_main' 		=> ['go_main.Rmd'],
-		'go_sections' => ['go_section.Rmd']
+		'qc' 		=> ['header.Rmd', 'config.Rmd', 'import.Rmd', 'deseq.Rmd', 'annotation.Rmd', 'qc_plots.Rmd'],
+		'de_main' 	=> ['contrast_main.Rmd'],
+		'de_venn' 	=> ['contrast_venn.Rmd'],
+		'de_sections' 	=> ['contrast_section.Rmd'],
+		'go_main' 	=> ['go_main.Rmd'],
+		'go_sections' 	=> ['go_section.Rmd']
 	);
 
 	return \%template_files;
@@ -56,8 +55,8 @@ sub _templates_exist {
 		foreach my $template_file (@$template_array) {
 			$template_file = $self->template_directory . "/" . $template_file;
 			Bio::Deago::Exceptions::FileNotFound->throw( error => "Error: Could not find template file: " . $template_file . "\n" )
-    		unless ( -e $template_file && -f $template_file );
-    }
+    			unless ( -e $template_file && -f $template_file );
+    		}
 	}
 	return 1;
 }
@@ -89,12 +88,11 @@ sub _build_markdown {
 
 sub _get_contrast_text {
 	my ($self) = @_;
-
+	
 	my @temporary_contrast_text;
 	foreach my $contrast_name ( @{$self->contrasts} ) {
 		my %contrast_values = ( 'contrast_name' => $contrast_name ); 
 		my @replaced_contrast_text = @{ $self->_replace_template_values( $self->template_files->{'de_sections'}, {%contrast_values, %{$self->replacement_values->{'de_main'}}} ) };
-		use Data::Dumper; print Dumper  ;
 		push( @temporary_contrast_text, @replaced_contrast_text );
 
 		if ( $self->config_hash->{'config'}{'go_analysis'} == 1 ) {
@@ -110,9 +108,9 @@ sub _get_go_text {
 	my ($self) = $_[0];
 	my $contrast_name = $_[1];
 
-	my %replacement_go_values = ( 'contrast_name' => $contrast_name,
-																'go_level' => $self->config_hash->{'config'}{'go_levels'} 
-															 );
+	my %replacement_go_values = ( 	'contrast_name' => $contrast_name,
+					'go_level' 	=> $self->config_hash->{'config'}{'go_levels'} 
+					);
 
 	my @temporary_go_text;
 	my @replaced_main_go_text = @{ $self->_replace_template_values( $self->template_files->{'go_main'}, \%replacement_go_values ) };
@@ -135,48 +133,48 @@ sub _get_go_text {
 sub _define_replacement_values {
 	my ($self) = @_;
 
-	my $replacement_values = { qc 			=> { 	config_filename   => abs_path($self->config_file),
-																						results_directory => $self->config_hash->{'config'}{'results_directory'},
-																						count_column 		  => $self->config_hash->{'config'}{'count_column'},
-																						skip_lines 			  => $self->config_hash->{'config'}{'skip_lines'},
-																						count_delimiter   => $self->config_hash->{'config'}{'count_delim'},
-																						alpha 						=> $self->config_hash->{'config'}{'qvalue'}
+	my $replacement_values = { 	qc	=> { 	config_filename   	=> abs_path($self->config_file),
+							results_directory	=> $self->config_hash->{'config'}{'results_directory'},
+							count_column 	  	=> $self->config_hash->{'config'}{'count_column'},
+							skip_lines 	  	=> $self->config_hash->{'config'}{'skip_lines'},
+							count_delimiter		=> $self->config_hash->{'config'}{'count_delim'},
+							alpha		  	=> $self->config_hash->{'config'}{'qvalue'}
                        										},
-                       			 de_main 	=> { alpha => $self->config_hash->{'config'}{'qvalue'} },
-                       		 	 go_main 	=> { alpha => $self->config_hash->{'config'}{'qvalue'} }
-        										}; 
+                       			de_main => { 	alpha 			=> $self->config_hash->{'config'}{'qvalue'} },
+                       		 	go_main => { 	alpha 			=> $self->config_hash->{'config'}{'qvalue'} }
+        			}; 
 
-  $replacement_values->{'qc'} = {%{$replacement_values->{'qc'}}, %{$self->_define_qc_plot_values}};
+	$replacement_values->{'qc'} = {%{$replacement_values->{'qc'}}, %{$self->_define_qc_plot_values}};
 	return $replacement_values;
 }
 
 sub _define_qc_plot_values {
 	my ($self) = @_;
 
-	my $qc_values = {	0	 => {	'rc_fig_width' 		=> 9, 'rc_fig_height' 	=> 7,
-                  					'sd_fig_width' 		=> 9, 'sd_fig_height' 	=> 7,
-	                          'pca_fig_width' 	=> 9, 'pca_fig_height' 	=> 7,
-	                          'cd_fig_width' 		=> 9, 'cd_fig_height' 	=> 7,
-	                          'dens_fig_width' 	=> 9, 'dens_fig_height' => 7,
-	                          'disp_fig_width' 	=> 9, 'disp_fig_height' => 7
-					                },
-										10 => {	'pca_fig_width' 	=> 10, 'pca_fig_height' 	=> 9
-													},
-                    20 => {	'pca_fig_width' 	=> 11, 'pca_fig_height' 	=>11,
-                          	'dens_fig_width' 	=> 11, 'dens_fig_height' 	=> 11
-                        	},
-                    30 => {	'sd_fig_width' 		=> 12, 'sd_fig_height' 		=> 11,
-                          	'pca_fig_width' 	=> 12, 'pca_fig_height' 	=> 11,
-                          	'dens_fig_width' 	=> 11, 'dens_fig_height' 	=> 12
-                        	},
-                    40 => {	'rc_fig_width' 		=> 10, 'rc_fig_height' 		=> 7,
-                          	'sd_fig_width' 		=> 12, 'sd_fig_height' 		=> 11,
-                          	'pca_fig_width' 	=> 14, 'pca_fig_height' 	=> 12,
-                          	'cd_fig_width' 		=> 10, 'cd_fig_height' 		=> 7,
-                          	'dens_fig_width' 	=> 11, 'dens_fig_height' 	=> 12,
-                          	'disp_fig_width' 	=> 10, 'disp_fig_height' 	=> 7
-                        	}
-									};
+	my $qc_values = {	0	=> {	'rc_fig_width' 		=> 9, 'rc_fig_height' 	=> 7,
+                  				'sd_fig_width' 		=> 9, 'sd_fig_height' 	=> 7,
+	                          		'pca_fig_width' 	=> 9, 'pca_fig_height' 	=> 7,
+	                          		'cd_fig_width' 		=> 9, 'cd_fig_height' 	=> 7,
+	                          		'dens_fig_width' 	=> 9, 'dens_fig_height' => 7,
+	                          		'disp_fig_width' 	=> 9, 'disp_fig_height' => 7
+					   },
+				10 	=> {	'pca_fig_width' 	=> 10, 'pca_fig_height' 	=> 9
+					   },
+                    		20	=> {	'pca_fig_width' 	=> 11, 'pca_fig_height' 	=>11,
+                          			'dens_fig_width' 	=> 11, 'dens_fig_height' 	=> 11
+                        		   },
+                    		30 	=> {	'sd_fig_width' 		=> 12, 'sd_fig_height' 		=> 11,
+                          			'pca_fig_width' 	=> 12, 'pca_fig_height' 	=> 11,
+                          			'dens_fig_width' 	=> 11, 'dens_fig_height' 	=> 12
+                        		   },
+                    		40	=> {	'rc_fig_width' 		=> 10, 'rc_fig_height' 		=> 7,
+                          			'sd_fig_width' 		=> 12, 'sd_fig_height' 		=> 11,
+                          			'pca_fig_width' 	=> 14, 'pca_fig_height' 	=> 12,
+		                          	'cd_fig_width' 		=> 10, 'cd_fig_height' 		=> 7,
+		                          	'dens_fig_width' 	=> 11, 'dens_fig_height' 	=> 12,
+		                          	'disp_fig_width' 	=> 10, 'disp_fig_height' 	=> 7
+                        		   }
+			};
 
 	if ( $self->num_samples >= 10 && $self->num_samples < 20 ) {
 		return { %{$qc_values->{0}}, %{$qc_values->{10}} };

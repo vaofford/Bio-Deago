@@ -30,10 +30,10 @@ ok (my $build_markdown_obj = Bio::Deago::BuildDeagoMarkdown->new(
 ), 'initialise build markdown object');
 
 ok ( my $markdown_obj = Bio::Deago::Markdown->new(
-	config_file 		=> $build_markdown_obj->{'config_file'},
-	config_hash 		=> $build_markdown_obj->{'config_hash'},
-	num_samples			=> scalar( @{$build_markdown_obj->targets} ),
-	contrasts 			=> $build_markdown_obj->contrasts,
+	config_file	=> $build_markdown_obj->{'config_file'},
+	config_hash 	=> $build_markdown_obj->{'config_hash'},
+	num_samples	=> scalar( @{$build_markdown_obj->targets} ),
+	contrasts 	=> $build_markdown_obj->contrasts,
 	output_filename => $expected_markdown_file
 ) ,'initialise markdown object');
 unlink($expected_markdown_file);
@@ -48,12 +48,13 @@ throws_ok{
 
 delete $markdown_obj->{'template_files'};
 my %expected_template_files = (
-		'qc' 					=> ['header.Rmd', 'config.Rmd', 'import.Rmd', 'deseq.Rmd', 'annotation.Rmd', 'qc_plots.Rmd'],
-		'de_main' 		=> ['contrast_main.Rmd'],
-		'de_venn' 		=> ['contrast_venn.Rmd'],
-		'de_sections' => ['contrast_section.Rmd'],
-		'go_main' 		=> ['go_main.Rmd'],
-		'go_sections' => ['go_section.Rmd']
+		'qc' 		=> ['header.Rmd', 'config.Rmd', 'import.Rmd', 'deseq.Rmd', 'annotation.Rmd', 'qc_plots.Rmd'],
+		'de_main' 	=> ['contrast_main.Rmd'],
+		'de_venn' 	=> ['contrast_venn.Rmd'],
+		'de_sections' 	=> ['contrast_section.Rmd'],
+		'go_main' 	=> ['go_main.Rmd'],
+		'go_sections' 	=> ['go_section.Rmd'],
+		'session'	=> ['session.Rmd']
 );
 is_deeply( $markdown_obj->template_files, \%expected_template_files, 'get markdown template files' );
 is( $markdown_obj->_templates_exist, 1, 'template files exist' );

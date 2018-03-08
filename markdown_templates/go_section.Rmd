@@ -1,5 +1,5 @@
 #### GO term enrichment - {$go_level}
-The table below contains a list of the top 20 signicant GO terms identified by the weight01 method and their associated p-values.
+The table below contains a list of the top 20 significant GO terms identified by the weight01 method and their associated p-values.
 ```\{r {$contrast_name}.{$go_level}, message=FALSE, comment=FALSE, warning=FALSE, results='asis'\}
 prepareGOtable(go_tables$'{$contrast_name}_{$go_level}')
 ```

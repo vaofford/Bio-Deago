@@ -1,8 +1,14 @@
 # QC plots
-## Reads per sample
-This reads per sample plot shows the total read counts for each sample. Bar colours represent experimental condition.
-```\{r countPlot, fig.width={$rc_fig_width}, fig.height={$rc_fig_height}\}
+## Total read counts per sample
+This reads per sample plot shows the total read counts (raw and normalized) for each sample. Bar colours represent experimental condition.
+```\{r readCountPlot, fig.width={$rc_fig_width}, fig.height={$rc_fig_height}\}
 plotReadCounts(dds, resultsDir)
+```
+
+## Null count percentage per sample
+This null count percentage per sample plot shows the percentage of genes which have no counts (raw and normalized) for each sample. Bar colours represent experimental condition.
+```\{r nullCountPlot, fig.width={$rc_fig_width}, fig.height={$rc_fig_height}\}
+plotNullCounts(dds, resultsDir)
 ```
 
 ## Sample-to-sample distances
@@ -11,10 +17,13 @@ The sample-to-sample distance plot gives an overview of how the samples cluster 
 plotSampleDistances(dds, resultsDir)
 ```
 
-##PCA plot
-The Principal Component Analysis (PCA) plot shows the first two principal components which explain the variability in the data using the regularized log count data.
+##PCA plot, scree plot and summary
+The Principal Component Analysis (PCA) plot shows the first two principal components which explain the variability in the data using the regularized log count data.  The scree plot shows the percentage contribution of each principal component (PC) to this variability. The PC summary shows the percentage contribution (bars in scree plot) and cumulative total (points in scree plot) for each PC.
 ```\{r pcaPlot, warning=FALSE, fig.width={$pca_fig_width}, fig.height={$pca_fig_height}\}
-pcaPlot(dds,resultsDir)
+pc_list <- getPrincipalComponents(dds)
+pcaPlot(pc_list,resultsDir)
+pcaScreePlot(pc_list,resultsDir)
+pcaSummary(pc_list)
 ```
 
 ##Cook's distances

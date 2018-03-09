@@ -2,7 +2,7 @@
 ```\{r config, message=FALSE\}
 parameters <- importConfig("{$config_filename}")
 resultsDir <- makeResultDir(parameters$results_directory, parameters$keep_images)
-parameters$results <- resultsDir
+parameters[['results']] <- resultsDir
 ```
 
 ```\{r printConfig, echo=FALSE\}

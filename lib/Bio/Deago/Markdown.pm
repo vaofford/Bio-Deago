@@ -156,29 +156,30 @@ sub _define_replacement_values {
 sub _define_qc_plot_values {
 	my ($self) = @_;
 
-	my $qc_values = {	0	=> {	'rc_fig_width' 		=> 9, 'rc_fig_height' 	=> 7,
-                  				'sd_fig_width' 		=> 9, 'sd_fig_height' 	=> 7,
-	                          		'pca_fig_width' 	=> 9, 'pca_fig_height' 	=> 7,
-	                          		'cd_fig_width' 		=> 9, 'cd_fig_height' 	=> 7,
-	                          		'dens_fig_width' 	=> 9, 'dens_fig_height' => 7,
-	                          		'disp_fig_width' 	=> 9, 'disp_fig_height' => 7
-					   },
-				10 	=> {	'pca_fig_width' 	=> 10, 'pca_fig_height' 	=> 9
-					   },
-                    		20	=> {	'pca_fig_width' 	=> 11, 'pca_fig_height' 	=>11,
-                          			'dens_fig_width' 	=> 11, 'dens_fig_height' 	=> 11
-                        		   },
-                    		30 	=> {	'sd_fig_width' 		=> 12, 'sd_fig_height' 		=> 11,
-                          			'pca_fig_width' 	=> 12, 'pca_fig_height' 	=> 11,
-                          			'dens_fig_width' 	=> 11, 'dens_fig_height' 	=> 12
-                        		   },
-                    		40	=> {	'rc_fig_width' 		=> 10, 'rc_fig_height' 		=> 7,
-                          			'sd_fig_width' 		=> 12, 'sd_fig_height' 		=> 11,
-                          			'pca_fig_width' 	=> 14, 'pca_fig_height' 	=> 12,
-		                          	'cd_fig_width' 		=> 10, 'cd_fig_height' 		=> 7,
-		                          	'dens_fig_width' 	=> 11, 'dens_fig_height' 	=> 12,
-		                          	'disp_fig_width' 	=> 10, 'disp_fig_height' 	=> 7
-                        		   }
+	my $qc_values = {	0	=> {		'rc_fig_width' 		=> 9, 'rc_fig_height' 	=> 11,
+                  						'sd_fig_width' 		=> 9, 'sd_fig_height' 	=> 7,
+	                          	'pca_fig_width' 	=> 9, 'pca_fig_height' 	=> 7,
+	                          	'pcs_fig_width' 	=> 9, 'pcs_fig_height' 	=> 7,
+	                          	'cd_fig_width' 		=> 9, 'cd_fig_height' 	=> 7,
+	                          	'dens_fig_width' 	=> 9, 'dens_fig_height' => 7,
+	                          	'disp_fig_width' 	=> 9, 'disp_fig_height' => 7
+					   							},
+										10 	=> { 	'pca_fig_width' 	=> 10, 'pca_fig_height' 	=> 9
+					   							},
+                		20	=> { 	'pca_fig_width' 	=> 11, 'pca_fig_height' 	=>11,
+                      				'dens_fig_width' 	=> 11, 'dens_fig_height' 	=> 11
+                    		   },
+                		30 	=> {	'sd_fig_width' 		=> 12, 'sd_fig_height' 		=> 11,
+                      				'pca_fig_width' 	=> 12, 'pca_fig_height' 	=> 11,
+                      				'dens_fig_width' 	=> 11, 'dens_fig_height' 	=> 12
+                    		   },
+                		40	=> {	'rc_fig_width' 		=> 10, 'rc_fig_height' 		=> 11,
+	                      			'sd_fig_width' 		=> 12, 'sd_fig_height' 		=> 11,
+	                      			'pca_fig_width' 	=> 14, 'pca_fig_height' 	=> 12,
+	                          	'cd_fig_width' 		=> 10, 'cd_fig_height' 		=> 7,
+	                          	'dens_fig_width' 	=> 11, 'dens_fig_height' 	=> 12,
+	                          	'disp_fig_width' 	=> 10, 'disp_fig_height' 	=> 7
+                    		   }
 			};
 
 	if ( $self->num_samples >= 10 && $self->num_samples < 20 ) {

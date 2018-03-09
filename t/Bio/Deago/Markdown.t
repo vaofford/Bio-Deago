@@ -59,9 +59,10 @@ my %expected_template_files = (
 is_deeply( $markdown_obj->template_files, \%expected_template_files, 'get markdown template files' );
 is( $markdown_obj->_templates_exist, 1, 'template files exist' );
 
-my $test_qc_values = {	'rc_fig_width' 		=> 9, 'rc_fig_height' 	=> 7,
+my $test_qc_values = {	'rc_fig_width' 		=> 9, 'rc_fig_height' 	=> 11,
                   			'sd_fig_width' 		=> 9, 'sd_fig_height' 	=> 7,
 	                      'pca_fig_width' 	=> 9, 'pca_fig_height' 	=> 7,
+	                      'pcs_fig_width' 	=> 9, 'pcs_fig_height' 	=> 7,
 	                      'cd_fig_width' 		=> 9, 'cd_fig_height' 	=> 7,
 	                      'dens_fig_width' 	=> 9, 'dens_fig_height' => 7,
 	                      'disp_fig_width' 	=> 9, 'disp_fig_height' => 7

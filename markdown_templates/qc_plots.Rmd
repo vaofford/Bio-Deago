@@ -17,11 +17,17 @@ The sample-to-sample distance plot gives an overview of how the samples cluster 
 plotSampleDistances(dds, resultsDir)
 ```
 
-##PCA plot, scree plot and summary
-The Principal Component Analysis (PCA) plot shows the first two principal components which explain the variability in the data using the regularized log count data.  The scree plot shows the percentage contribution of each principal component (PC) to this variability. The PC summary shows the percentage contribution (bars in scree plot) and cumulative total (points in scree plot) for each PC.
+##Principal component analysis (PCA)
+### PCA plot
+The Principal Component Analysis (PCA) plot shows the first two principal components which explain the variability in the data using the regularized log count data.  
 ```\{r pcaPlot, warning=FALSE, fig.width={$pca_fig_width}, fig.height={$pca_fig_height}\}
 pc_list <- getPrincipalComponents(dds)
 pcaPlot(pc_list,resultsDir)
+```
+
+### PC scree plot and summary
+The principal components (PC) scree plot shows the percentage contribution of each PC. The PC summary shows the percentage contribution (bars in scree plot) and cumulative total (points in scree plot) for each PC.
+```\{r pcaScreePlot, warning=FALSE, fig.width={$pcs_fig_width}, fig.height={$pcs_fig_height}\}
 pcaScreePlot(pc_list,resultsDir)
 pcaSummary(pc_list)
 ```

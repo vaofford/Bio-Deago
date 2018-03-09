@@ -6,5 +6,5 @@ parameters$results <- resultsDir
 ```
 
 ```\{r printConfig, echo=FALSE\}
-datatable(t(as.data.frame(parameters)), options = list(dom = 't', pageLength = 15), colnames=c('parameter', 'value'))
+datatable(t(as.data.frame(parameters)), options = list(dom = 't', pageLength = 20), colnames=c('parameter', 'value'))
 ```

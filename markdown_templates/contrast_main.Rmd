@@ -1,13 +1,6 @@
 #Pairwise contrasts
 
-The summary table below contains the total number of differentially expressed genes and the number of up-regulated (lfc > 2) and down-regulated (lfc < -2) genes for each contrast (adjusted p-value < {$alpha}).
-
 ```\{r contrasts, echo=TRUE\}
 contrasts <- getContrasts(dds, parameters)
 writeContrasts(dds, contrasts, resultsDir)
-```
-
-```\{r contrast_summary, echo=TRUE\}
-contrast_summary <- contrastSummary(contrasts, parameters)
-datatable(contrast_summary, options = list(dom = 't', colnames=c('contrast', 'up-regulated','down-regulated','total'), columnDefs = list(list(className = 'dt-center', targets = 1:ncol(contrast_summary)))))
 ```

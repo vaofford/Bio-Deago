@@ -48,25 +48,26 @@ throws_ok{
 
 delete $markdown_obj->{'template_files'};
 my %expected_template_files = (
-		'qc' 		=> ['header.Rmd', 'config.Rmd', 'import.Rmd', 'deseq.Rmd', 'annotation.Rmd', 'qc_plots.Rmd'],
-		'de_main' 	=> ['contrast_main.Rmd'],
-		'de_venn' 	=> ['contrast_venn.Rmd'],
+		'qc' 			=> ['header.Rmd', 'config.Rmd', 'import.Rmd', 'deseq.Rmd', 'annotation.Rmd', 'qc_plots.Rmd'],
+		'de_main' 		=> ['contrast_main.Rmd'],
+		'de_summary' 	=> ['contrast_summary.Rmd'],
+		'de_venn' 		=> ['contrast_venn.Rmd'],
 		'de_sections' 	=> ['contrast_section.Rmd'],
-		'go_main' 	=> ['go_main.Rmd'],
+		'go_main' 		=> ['go_main.Rmd'],
 		'go_sections' 	=> ['go_section.Rmd'],
-		'session'	=> ['session.Rmd']
+		'session'		=> ['session.Rmd']
 );
 is_deeply( $markdown_obj->template_files, \%expected_template_files, 'get markdown template files' );
 is( $markdown_obj->_templates_exist, 1, 'template files exist' );
 
 my $test_qc_values = {	'rc_fig_width' 		=> 9, 'rc_fig_height' 	=> 11,
-                  			'sd_fig_width' 		=> 9, 'sd_fig_height' 	=> 7,
-	                      'pca_fig_width' 	=> 9, 'pca_fig_height' 	=> 7,
-	                      'pcs_fig_width' 	=> 9, 'pcs_fig_height' 	=> 7,
-	                      'cd_fig_width' 		=> 9, 'cd_fig_height' 	=> 7,
-	                      'dens_fig_width' 	=> 9, 'dens_fig_height' => 7,
-	                      'disp_fig_width' 	=> 9, 'disp_fig_height' => 7
-					            };
+						'sd_fig_width' 		=> 9, 'sd_fig_height' 	=> 7,
+						'pca_fig_width' 	=> 9, 'pca_fig_height' 	=> 7,
+						'pcs_fig_width' 	=> 9, 'pcs_fig_height' 	=> 7,
+						'cd_fig_width' 		=> 9, 'cd_fig_height' 	=> 7,
+						'dens_fig_width' 	=> 9, 'dens_fig_height' => 7,
+						'disp_fig_width' 	=> 9, 'disp_fig_height' => 7
+					};
 is_deeply( $markdown_obj->_define_qc_plot_values, $test_qc_values, 'get replacement qc plot values' );
 
 is( $markdown_obj->_define_qc_plot_values->{'pca_fig_width'}, 9, 'samples < 10 replacement qc plot pca_fig_width 9' );
@@ -88,7 +89,7 @@ is( $markdown_obj->_define_replacement_values->{'de_main'}{'alpha'}, 0.05, 'get 
 is( $markdown_obj->_define_replacement_values->{'go_main'}{'alpha'}, 0.05, 'get replacement values go_main alpha set to 0.05' );
 
 like( $markdown_obj->_get_contrast_text->[0], qr/[\#\# 0b_vs_0a]\d+[Points will be colored red if the adjusted p-value is less than 0.05]/, 'get replaced contrast text' );
-like( $markdown_obj->_get_go_text->[1], qr/\#\#\#\# GO term enrichment - BP/, 'get go term enrichment text' );
+like( $markdown_obj->_get_go_text->[0], qr/\#\#\# GO term enrichment - BP/, 'get go term enrichment text' );
 
 like( $markdown_obj->_replace_template_values( $markdown_obj->template_files->{'qc'}, $markdown_obj->replacement_values->{'qc'} )->[2], qr/genes for each contrast \(padj < 0.05\)/, 'replace template values');
 

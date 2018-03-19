@@ -38,13 +38,14 @@ sub _get_template_files {
 	my ($self) = @_;
 
 	my %template_files = (
-		'qc' 					=> ['header.Rmd', 'config.Rmd', 'import.Rmd', 'deseq.Rmd', 'annotation.Rmd', 'qc_plots.Rmd'],
-		'de_main' 		=> ['contrast_main.Rmd'],
-		'de_venn' 		=> ['contrast_venn.Rmd'],
-		'de_sections' => ['contrast_section.Rmd'],
-		'go_main' 		=> ['go_main.Rmd'],
+		'qc'			=> ['header.Rmd', 'config.Rmd', 'import.Rmd', 'deseq.Rmd', 'annotation.Rmd', 'qc_plots.Rmd'],
+		'de_main'		=> ['contrast_main.Rmd'],
+		'de_summary'	=> ['contrast_summary.Rmd'],
+		'de_venn'		=> ['contrast_venn.Rmd'],
+		'de_sections'	=> ['contrast_section.Rmd'],
+		'go_main'		=> ['go_main.Rmd'],
 		'go_sections'	=> ['go_section.Rmd'],
-		'session'			=> ['session.Rmd'],
+		'session'		=> ['session.Rmd'],
 	);
 
 	return \%template_files;
@@ -76,6 +77,14 @@ sub _build_markdown {
 		my @replaced_de_main_text = @{ $self->_replace_template_values( $self->template_files->{'de_main'}, $self->replacement_values->{'de_main'} ) };
 		push( @replaced_text, @replaced_de_main_text );
 
+		if ( $self->config_hash->{'config'}{'go_analysis'} == 1 ) {
+			my @replaced_main_go_text = @{ $self->_replace_template_values( $self->template_files->{'go_main'} ) };
+			push( @replaced_text, @replaced_main_go_text );
+		}
+
+		my @replaced_de_summary_text = @{ $self->_replace_template_values( $self->template_files->{'de_summary'}, $self->replacement_values->{'de_main'} ) };
+		push( @replaced_text, @replaced_de_summary_text );
+
 		if ( scalar(@{$self->contrasts}) <= 4 && scalar(@{$self->contrasts}) > 1 ) {
 			my @replaced_de_main_text = @{ $self->_replace_template_values( $self->template_files->{'de_venn'}, $self->replacement_values->{'de_venn'} ) };
 			push( @replaced_text, @replaced_de_main_text );
@@ -83,6 +92,7 @@ sub _build_markdown {
 
 		my @replaced_de_section_text = @{ $self->_get_contrast_text() };
 		push( @replaced_text, @replaced_de_section_text );
+
 	}
 
 	my @replaced_session_text = @{ $self->_replace_template_values( $self->template_files->{'session'}, $self->replacement_values->{'session'} ) };
@@ -113,13 +123,9 @@ sub _get_go_text {
 	my ($self) = $_[0];
 	my $contrast_name = $_[1];
 
-	my %replacement_go_values = ( 	'contrast_name' => $contrast_name,
-					'go_level' 	=> $self->config_hash->{'config'}{'go_levels'} 
-					);
+	my %replacement_go_values = ( 	'contrast_name' => $contrast_name, 'go_level' 	=> $self->config_hash->{'config'}{'go_levels'} );
 
 	my @temporary_go_text;
-	my @replaced_main_go_text = @{ $self->_replace_template_values( $self->template_files->{'go_main'}, \%replacement_go_values ) };
-	push( @temporary_go_text, @replaced_main_go_text );
 
 	if ( $self->config_hash->{'config'}{'go_levels'} eq 'all' ) {
 		my %replacement_bp_values = ( 'contrast_name' => $contrast_name, 'go_level' => 'BP' );

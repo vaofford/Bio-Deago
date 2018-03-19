@@ -1,7 +1,17 @@
-### GO term enrichment - {$go_level}
-The table below contains a list of the top 20 significant GO terms identified by the weight01 method and their associated p-values.
+### GO term enrichment - {$go_level} (all DE genes)
+The table below contains a list of the top 20 significant GO terms identified by the weight01 method and their associated p-values for all significantly differentially expressed genes (q < 0.05). 
 ```\{r {$contrast_name}.{$go_level}, message=FALSE, comment=FALSE, warning=FALSE, results='asis'\}
 prepareGOtable(go_tables$'{$contrast_name}_{$go_level}')
 ```
 
+### GO term enrichment - {$go_level} (upregulated genes only)
+The table below contains a list of the top 20 significant GO terms identified by the weight01 method and their associated p-values for all significantly upregulated genes (q < 0.05, log2foldChange > 0).
+```\{r {$contrast_name}.{$go_level}.up, message=FALSE, comment=FALSE, warning=FALSE, results='asis'\}
+prepareGOtable(go_tables$'{$contrast_name}_{$go_level}_up')
+```
 
+### GO term enrichment - {$go_level} (downregulated genes only)
+The table below contains a list of the top 20 significant GO terms identified by the weight01 method and their associated p-values for all significantly downregulated genes (q < 0.05, log2foldChange < 0).
+```\{r {$contrast_name}.{$go_level}.down, message=FALSE, comment=FALSE, warning=FALSE, results='asis'\}
+prepareGOtable(go_tables$'{$contrast_name}_{$go_level}_down')
+```

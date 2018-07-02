@@ -16,7 +16,7 @@ install:
   - wget https://cran.r-project.org/src/base/R-3/R-3.4.0.tar.gz 
   - tar -xvf R-3.4.0.tar.gz
   - pushd R-3.4.0 && ./configure --with-readline=no --with-x --with-cairo --prefix=/usr && make && sudo make install && popd
-  - sudo Rscript -e "install.packages(c('DT', 'ggplot2', 'ggpubr', 'ggrepel', 'markdown', 'Matrix', 'reshape', 'rmarkdown', 'scales', 'XML'), repos='http://mirrors.ebi.ac.uk/CRAN/')"
+  - sudo Rscript -e "install.packages(c('DT', 'ggplot2', 'ggpubr', 'ggrepel', 'markdown', 'Matrix', 'reshape', 'rmarkdown', 'scales', 'XML'), repos='https://www.stats.bris.ac.uk/R/')"
   - sudo Rscript -e "source('http://bioconductor.org/biocLite.R')" -e "biocLite(c('GenomicRanges', 'graph', 'limma', 'SummarizedExperiment', 'S4Vectors'))"
   - sudo Rscript -e "source('http://bioconductor.org/biocLite.R')" -e "biocLite(c('DESeq2', 'topGO'))"
   - git clone --branch v1.1.3 https://github.com/sanger-pathogens/deago.git

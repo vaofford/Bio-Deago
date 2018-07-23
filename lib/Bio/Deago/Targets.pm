@@ -4,10 +4,10 @@ use Moose;
 use File::Slurper qw(read_lines);
 use Text::CSV::Hashify;
 
-has 'config_hash' 		=> ( is => 'ro', isa => 'Config::General', 	required => 1);
+has 'config_hash' 		=> ( is => 'ro', isa => 'Config::General', required => 1);
 has 'targets_file'		=> ( is => 'rw', isa => 'Str');
-has 'targets'					=> ( is => 'ro', isa => 'ArrayRef',					lazy => 1, 		builder => '_read_targets' );
-has 'target_is_valid' => ( is => 'ro', isa => 'Bool', 						lazy => 1, 		builder => '_validate_targets' );
+has 'targets'			=> ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_read_targets' );
+has 'target_is_valid' 		=> ( is => 'ro', isa => 'Bool', lazy => 1, builder => '_validate_targets' );
 
 sub BUILD {
 	my ($self) = @_;
@@ -26,10 +26,10 @@ sub BUILD {
 sub _read_targets {
 	my ($self) = @_;
 
-	my $targets_obj = Text::CSV::Hashify->new({	file		=> $self->targets_file,
-																							sep			=> "\t",
-																							format 	=>	'aoh'
-																 						});
+	my $targets_obj = Text::CSV::Hashify->new({	file     => $self->targets_file,
+							sep_char => "\t",
+							format 	 => 'aoh'
+						  });
 
 	my $target_arrayref = $targets_obj->all;
 	for (my $i=0; $i < scalar(@$target_arrayref); $i++) {

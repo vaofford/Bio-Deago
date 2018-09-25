@@ -32,14 +32,14 @@ DEAGO has the following dependencies:
 * [R](https://www.r-project.org) >= 3.4.0 
 * [deago](https://github.com/sanger-pathogens/deago)
 
-Details to install DEAGo are provided below. If you encounter an issue when installing DEAGO please contact your local system administrator. If you encounter a bug please log it [here](https://github.com/sanger-pathogens/bio-deago/issues) or email us at path-help@sanger.ac.uk.
+Details to install DEAGO are provided below. If you encounter an issue when installing DEAGO please contact your local system administrator. If you encounter a bug please log it [here](https://github.com/sanger-pathogens/bio-deago/issues) or email us at path-help@sanger.ac.uk.
 
 ### From Source
-Make sure you have instlled all dependenies, then clone the repository:   
+Make sure you have installed all dependencies, then clone the repository:   
   
 `git clone https://github.com/sanger-pathogens/Bio-Deago.git`   
   
-Move into the directory and install all perl dependencies using DistZilla and cpanm:   
+Move into the directory and install all perl dependencies using [DistZilla](http://dzil.org/) and [cpanm](https://github.com/miyagawa/cpanminus):   
 ```
 cd Bio-Deago
 dzil authordeps --missing | cpanm
@@ -165,7 +165,7 @@ Differential expression and GO term enrichment analysis results are written to t
 | \<contrast\>_\<go_level\>.tsv  | GO term enrichment analysis results                            |
 
 ## License
-Deago is free software, licensed under [GPLv3](https://github.com/sanger-pathogens/Bio-Deago/blob/master/GPL-LICENSE).
+DEAGO is free software, licensed under [GPLv3](https://github.com/sanger-pathogens/Bio-Deago/blob/master/GPL-LICENSE).
 
 ## Feedback/Issues
 Please report any issues to the [issues page](https://github.com/sanger-pathogens/Bio-Deago/issues) or email path-help@sanger.ac.uk.

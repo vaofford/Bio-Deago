@@ -27,8 +27,13 @@ before_script:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
   - sleep 3 # give xvfb some time to start
+  - cpanm --quiet --notest Dist::Zilla::App::Command::cover
+  - cpanm --quiet --notest --skip-satisfied Devel::Cover::Report::Codecov
 
 script:
   - "dzil authordeps --missing | cpanm --notest"
   - "dzil listdeps --missing | cpanm --notest"
   - "dzil test" 
+
+after_success:
+  - dzil cover -test -report codecov

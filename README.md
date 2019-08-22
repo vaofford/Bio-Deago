@@ -4,6 +4,8 @@ Generate user-friendly HTML reports from differential expression and GO term enr
 [![Build Status](https://travis-ci.org/sanger-pathogens/Bio-Deago.svg?branch=master)](https://travis-ci.org/sanger-pathogens/Bio-Deago)   
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-brightgreen.svg)](https://github.com/sanger-pathogens/Bio-Deago/blob/master/GPL-LICENSE)  
 [![codecov](https://codecov.io/gh/sanger-pathogens/bio-deago/branch/master/graph/badge.svg)](https://codecov.io/gh/sanger-pathogens/bio-deago)   
+[![https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg](https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg)](https://singularity-hub.org/collections/3450)
+
 
 ## Contents
   * [Introduction](#introduction)

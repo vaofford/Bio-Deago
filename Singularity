@@ -34,4 +34,5 @@ Help message
         cpanm CPAN::Meta::Requirements
         dzil listdeps --missing | cpanm
         dzil test
-dzil install
+        dzil install
+        ln -s Bio-Deago/markdown_templates /usr/local/share/markdown_templates

@@ -35,4 +35,4 @@ Help message
         dzil listdeps --missing | cpanm
         dzil test
         dzil install
-        cp -r ~/Bio-Deago/markdown_templates /usr/local/share/
+        cp -r ./markdown_templates /usr/local/share/
